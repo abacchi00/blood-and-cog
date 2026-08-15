@@ -7,12 +7,6 @@ mod position;
 use player::Player;
 use direction::Direction;
 
-#[derive(Clone, Copy, PartialEq)]
-pub struct Pos {
-  pub x: f32,
-  pub y: f32,
-}
-
 #[macroquad::main("Shooter")]
 async fn main() {
   let mut player = Player::new();
