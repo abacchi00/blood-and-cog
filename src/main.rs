@@ -4,11 +4,13 @@ mod player;
 mod direction;
 mod bullet;
 mod aim;
+mod enemy;
 
 use crate::player::Player;
 use crate::direction::Direction;
 use crate::bullet::Bullet;
 use crate::aim::Aim;
+use crate::enemy::Enemy;
 
 #[macroquad::main("Blood & Cog")]
 async fn main() {
@@ -17,6 +19,12 @@ async fn main() {
   let mut player = Player::new();
   let mut aim = Aim::new();
   let mut bullets: Vec<Bullet> = Vec::new();
+  let mut enemies: Vec<Enemy> = Vec::new();
+
+  enemies.push(Enemy::new(Vec2::new(player.pos.x - screen_width()/3.0, player.pos.y - screen_height()/3.0)));
+  enemies.push(Enemy::new(Vec2::new(player.pos.x - screen_width()/3.0, player.pos.y + screen_height()/3.0)));
+  enemies.push(Enemy::new(Vec2::new(player.pos.x + screen_width()/3.0, player.pos.y - screen_height()/3.0)));
+  enemies.push(Enemy::new(Vec2::new(player.pos.x + screen_width()/3.0, player.pos.y + screen_height()/3.0)));
 
   loop {
     clear_background(BLACK);
@@ -41,10 +49,12 @@ async fn main() {
       bullet.render();
 
       bullet.pos.x >= 0.0 
-          && bullet.pos.x <= screen_width() 
-          && bullet.pos.y >= 0.0 
-          && bullet.pos.y <= screen_height()
+        && bullet.pos.x <= screen_width() 
+        && bullet.pos.y >= 0.0 
+        && bullet.pos.y <= screen_height()
     });
+
+    enemies.iter().for_each(|enemy| enemy.render());
 
     player.render();
     aim.render(mouse_x, mouse_y);

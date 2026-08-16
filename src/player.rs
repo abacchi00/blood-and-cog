@@ -16,7 +16,7 @@ impl Player {
   pub fn new() -> Self {
     Self {
       dirs: Vec::new(),
-      pos: Vec2::new(50.0, 50.0),
+      pos: Vec2::new(screen_width()/2.0, screen_height()/2.0),
     }
   }
 
