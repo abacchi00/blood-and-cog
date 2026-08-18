@@ -8,12 +8,19 @@ const BG_COLOR: Color = BLACK; // todo: move this to global consts
 
 pub struct Enemy {
   pub pos: Vec2,
-  life: f32,
   pub radius: f32,
+  life: f32,
 }
 
 impl Enemy {
-  pub fn new(pos: Vec2) -> Self {
+  pub fn new(opt_pos: Option<Vec2>) -> Self {
+    let pos = opt_pos.unwrap_or_else(|| {
+      Vec2::new(
+        rand::gen_range(ENEMY_RADIUS, screen_width() - ENEMY_RADIUS),
+        rand::gen_range(ENEMY_RADIUS, screen_height() - ENEMY_RADIUS)
+      )
+    });
+
     Self {
       pos,
       life: ENEMY_INITIAL_LIFE,
@@ -21,10 +28,16 @@ impl Enemy {
     }
   }
 
-  pub fn take_hit(&mut self) -> bool {
+  pub fn take_hit(&mut self) {
     self.life -= 20.0;
+  }
 
-    return self.life <= 0.0
+  pub fn is_alive(&self) -> bool {
+    self.life > 0.0
+  }
+
+  pub fn update_pos(&mut self, _dt: f32) {
+    // TODO
   }
 
   pub fn render(&self) {
