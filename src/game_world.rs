@@ -1,5 +1,7 @@
 use macroquad::prelude::*;
 
+use crate::traits::Renderable;
+
 use crate::player::Player;
 use crate::bullet::Bullet;
 use crate::aim::Aim;
@@ -85,15 +87,18 @@ impl GameWorld {
     }
   }
 
+  fn draw_entities<T: Renderable>(entities: &[T]) {
+    for entity in entities {
+      entity.render();
+    }
+  }
+
   pub fn render(&self) {
     clear_background(BLACK);
 
-    for bullet in &self.bullets { bullet.render(); }
-    for enemy in &self.enemies { enemy.render(); }
-
+    Self::draw_entities(&self.bullets);
+    Self::draw_entities(&self.enemies);
     self.player.render();
-    
-    let (mx, my) = mouse_position();
-    self.aim.render(mx, my);
+    self.aim.render(); 
   }
 }

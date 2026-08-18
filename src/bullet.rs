@@ -1,5 +1,7 @@
 use macroquad::prelude::*;
 
+use crate::traits::Renderable;
+
 const BULLET_RADIUS: f32 = 4.0;
 const BULLET_COLOR: Color = WHITE;
 const BULLET_VEL: f32 = 1000.0; // pixels-per-second with dt
@@ -29,10 +31,6 @@ impl Bullet {
     self.pos += self.dir * self.vel * dt;
   }
 
-  pub fn render(&self) {
-    draw_circle(self.pos.x, self.pos.y, self.radius, BULLET_COLOR);
-  }
-
   pub fn collides_with(&self, obj_pos: Vec2, obj_radius: f32) -> bool {
     let dx = self.pos.x - obj_pos.x;
     let dy = self.pos.y - obj_pos.y;
@@ -53,5 +51,11 @@ impl Bullet {
       && self.pos.x <= sw
       && self.pos.y >= 0.0
       && self.pos.y <= sh
+  }
+}
+
+impl Renderable for Bullet {
+  fn render(&self) {
+    draw_circle(self.pos.x, self.pos.y, self.radius, BULLET_COLOR);
   }
 }

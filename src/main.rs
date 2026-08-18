@@ -1,5 +1,6 @@
 use macroquad::prelude::*;
 
+mod traits;
 mod player;
 mod direction;
 mod bullet;

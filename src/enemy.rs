@@ -1,5 +1,7 @@
 use macroquad::prelude::*;
 
+use crate::traits::Renderable;
+
 const ENEMY_RADIUS: f32 = 15.0;
 const ENEMY_BORDER_THICKNESS: f32 = 3.0;
 const ENEMY_COLOR: Color = Color::new(1.0, 0.5, 0.5, 1.0); // light-red / salmon
@@ -39,8 +41,10 @@ impl Enemy {
   pub fn update_pos(&mut self, _dt: f32) {
     // TODO
   }
+}
 
-  pub fn render(&self) {
+impl Renderable for Enemy {
+  fn render(&self) {
     draw_circle(self.pos.x, self.pos.y, self.radius, ENEMY_COLOR);
     draw_circle(self.pos.x, self.pos.y, self.radius - ENEMY_BORDER_THICKNESS, BG_COLOR);
     draw_text(format!("{}", self.life), self.pos.x - self.radius, self.pos.y + self.radius * 2.0, 20.0, WHITE);

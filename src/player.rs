@@ -1,5 +1,7 @@
 use macroquad::prelude::*;
+
 use crate::direction::Direction;
+use crate::traits::Renderable;
 
 const PLAYER_RADIUS: f32 = 15.0;
 const PLAYER_BORDER_THICKNESS: f32 = 3.0;
@@ -51,8 +53,10 @@ impl Player {
     self.pos.x += dx * PLAYER_BASE_SPEED * dt;
     self.pos.y += dy * PLAYER_BASE_SPEED * dt;
   }
+}
 
-  pub fn render(&self) {
+impl Renderable for Player {
+  fn render(&self) {
     draw_circle(self.pos.x, self.pos.y, PLAYER_RADIUS, PLAYER_COLOR);
     draw_circle(self.pos.x, self.pos.y, PLAYER_RADIUS - PLAYER_BORDER_THICKNESS, BG_COLOR);
   }
