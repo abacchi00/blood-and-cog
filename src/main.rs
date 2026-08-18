@@ -12,6 +12,18 @@ use crate::bullet::Bullet;
 use crate::aim::Aim;
 use crate::enemy::Enemy;
 
+fn bullet_collision(a: &Bullet, b: &Enemy) -> bool {
+  let dx = a.pos.x - b.pos.x;
+  let dy = a.pos.y - b.pos.y;
+  
+  let c_sqrd = (dx * dx) + (dy * dy);
+  
+  let radius_sum = a.radius + b.radius;
+  let radius_sum_sqrd = radius_sum * radius_sum;
+  
+  c_sqrd < radius_sum_sqrd
+}
+
 #[macroquad::main("Blood & Cog")]
 async fn main() {
   show_mouse(false);
@@ -47,11 +59,26 @@ async fn main() {
     bullets.retain_mut(|bullet| {
       bullet.update_pos(dt);
       bullet.render();
+      
+      let mut hit_enemy = false;
+
+      enemies.retain_mut(|enemy| {
+        if bullet_collision(bullet, enemy) {
+          let dead = enemy.take_hit();
+
+          hit_enemy = true;
+
+          if dead { return false; }
+        }
+
+        true
+      });
 
       bullet.pos.x >= 0.0 
         && bullet.pos.x <= screen_width() 
         && bullet.pos.y >= 0.0 
         && bullet.pos.y <= screen_height()
+        && !hit_enemy
     });
 
     enemies.iter().for_each(|enemy| enemy.render());

@@ -8,6 +8,7 @@ pub struct Bullet {
   pub pos: Vec2,
   vel: f32,
   dir: Vec2,
+  pub radius: f32, 
 }
 
 impl Bullet {
@@ -18,6 +19,7 @@ impl Bullet {
       pos: start_pos,
       vel: BULLET_VEL,
       dir,
+      radius: BULLET_RADIUS,
     }
   }
 
@@ -26,6 +28,6 @@ impl Bullet {
   }
 
   pub fn render(&self) {
-    draw_circle(self.pos.x, self.pos.y, BULLET_RADIUS, BULLET_COLOR);
+    draw_circle(self.pos.x, self.pos.y, self.radius, BULLET_COLOR);
   }
 }
