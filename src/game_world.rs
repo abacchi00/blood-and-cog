@@ -147,7 +147,7 @@ impl GameWorld {
   }
 
   pub fn render(&self) {
-    clear_background(BLACK);
+    clear_background(BG_COLOR);
 
     for bullet in &self.bullets { bullet.render(); }
     for enemy in &self.enemies { enemy.render(); }

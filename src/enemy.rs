@@ -41,8 +41,8 @@ impl Enemy {
 
 impl Renderable for Enemy {
   fn render(&self) {
-    draw_circle(self.pos.x, self.pos.y, self.radius, ENEMY_COLOR);
-    draw_circle(self.pos.x, self.pos.y, self.radius - ENEMY_BORDER_THICKNESS, BG_COLOR);
+    draw_circle(self.pos.x, self.pos.y, self.radius, ENEMY_BORDER_COLOR);
+    draw_circle(self.pos.x, self.pos.y, self.radius - ENEMY_BORDER_THICKNESS, ENEMY_COLOR);
     draw_text(format!("{}", self.life), self.pos.x - self.radius, self.pos.y + self.radius * 2.0, 20.0, WHITE);
   }
 }

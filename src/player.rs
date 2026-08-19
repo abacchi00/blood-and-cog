@@ -28,8 +28,8 @@ impl Player {
 
 impl Renderable for Player {
   fn render(&self) {
-    draw_circle(self.pos.x, self.pos.y, PLAYER_RADIUS, PLAYER_COLOR);
-    draw_circle(self.pos.x, self.pos.y, PLAYER_RADIUS - PLAYER_BORDER_THICKNESS, BG_COLOR);
+    draw_circle(self.pos.x, self.pos.y, PLAYER_RADIUS, PLAYER_BORDER_COLOR);
+    draw_circle(self.pos.x, self.pos.y, PLAYER_RADIUS - PLAYER_BORDER_THICKNESS, PLAYER_COLOR);
   }
 }
 
