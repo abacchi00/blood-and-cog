@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 
-use crate::traits::{Renderable, Updatable};
+use crate::traits::{Renderable, Updatable, Expirable};
 
 use crate::player::Player;
 use crate::bullet::Bullet;
@@ -78,13 +78,9 @@ impl GameWorld {
   }
 
   fn cleanup_and_spawn(&mut self) {
-    // Remove out of bound bullets & bullets that collided with something
-    self.bullets.retain(|b| !b.collided && b.is_within_bounds());
+    self.bullets.retain(|b| !b.should_clean());
+    self.enemies.retain(|e| !e.should_clean());
 
-    // Remove dead enemies
-    self.enemies.retain(|e| e.is_alive());
-
-    // Maintain enemy population density
     while self.enemies.len() < MIN_ENEMIES_COUNT {
       self.enemies.push(Enemy::new(None));
     }

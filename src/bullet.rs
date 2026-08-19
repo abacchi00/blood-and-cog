@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 
-use crate::traits::{Renderable, Updatable};
+use crate::traits::{Renderable, Updatable, Expirable};
 
 const BULLET_RADIUS: f32 = 4.0;
 const BULLET_COLOR: Color = WHITE;
@@ -59,5 +59,11 @@ impl Renderable for Bullet {
 impl Updatable for Bullet {
   fn update(&mut self, dt: f32, _world_width: f32, _world_height: f32) {
     self.pos += self.dir * self.vel * dt;
+  }
+}
+
+impl Expirable for Bullet {
+  fn should_clean(&self) -> bool {
+    self.collided || !self.is_within_bounds()
   }
 }

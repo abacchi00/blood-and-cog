@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 
-use crate::traits::{Renderable, Updatable};
+use crate::traits::{Renderable, Updatable, Expirable};
 
 const ENEMY_RADIUS: f32 = 15.0;
 const ENEMY_BORDER_THICKNESS: f32 = 3.0;
@@ -50,5 +50,11 @@ impl Renderable for Enemy {
 impl Updatable for Enemy {
   fn update(&mut self, _dt: f32, _world_width: f32, _world_height: f32) {
     // TODO
+  }
+}
+
+impl Expirable for Enemy {
+  fn should_clean(&self) -> bool {
+    !self.is_alive()
   }
 }
