@@ -8,6 +8,7 @@ mod aim;
 mod enemy;
 mod game_world;
 mod config;
+mod wall;
 
 use crate::game_world::GameWorld;
 

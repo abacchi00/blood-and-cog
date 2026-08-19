@@ -18,13 +18,12 @@ impl Player {
   }
 
   pub fn update_input(&mut self) {
-    // Instead of instantiating direction collections, calculate target axes directly
     self.dirs.clear();
     if is_key_down(KeyCode::W) || is_key_down(KeyCode::Up) { self.dirs.push(Direction::Up); }
     if is_key_down(KeyCode::S) || is_key_down(KeyCode::Down) { self.dirs.push(Direction::Down); }
     if is_key_down(KeyCode::A) || is_key_down(KeyCode::Left) { self.dirs.push(Direction::Left); }
     if is_key_down(KeyCode::D) || is_key_down(KeyCode::Right) { self.dirs.push(Direction::Right); }
-}
+  }
 }
 
 impl Renderable for Player {

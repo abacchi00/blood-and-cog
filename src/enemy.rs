@@ -1,6 +1,11 @@
 use macroquad::prelude::*;
 
-use crate::traits::{Renderable, Updatable, Expirable};
+use crate::traits::{
+  Renderable,
+  Updatable,
+  Expirable,
+  Collidable, CollisionShape,
+};
 use crate::config::*;
 
 pub struct Enemy {
@@ -51,5 +56,12 @@ impl Updatable for Enemy {
 impl Expirable for Enemy {
   fn should_clean(&self) -> bool {
     !self.is_alive()
+  }
+}
+
+impl Collidable for Enemy {
+  fn pos(&self) -> Vec2 { self.pos }
+  fn shape(&self) -> CollisionShape {
+    CollisionShape::Circle { radius: self.radius }
   }
 }

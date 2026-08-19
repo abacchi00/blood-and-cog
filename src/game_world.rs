@@ -1,18 +1,26 @@
 use macroquad::prelude::*;
 
-use crate::traits::{Renderable, Updatable, Expirable};
+use crate::traits::{
+  Renderable,
+  Updatable,
+  Expirable,
+
+  Collidable, check_collision,
+};
 use crate::config::*;
 
 use crate::player::Player;
 use crate::bullet::Bullet;
 use crate::aim::Aim;
 use crate::enemy::Enemy;
+use crate::wall::Wall;
 
 pub struct GameWorld {
   player: Player,
   aim: Aim,
   bullets: Vec<Bullet>,
   enemies: Vec<Enemy>,
+  walls: Vec<Wall>,
 }
 
 impl GameWorld {
@@ -22,9 +30,11 @@ impl GameWorld {
       aim: Aim::new(),
       bullets: Vec::new(),
       enemies: Vec::new(),
+      walls: Vec::new(),
     };
 
     world.spawn_initial_enemies();
+    world.spawn_initial_walls();
 
     world
   }
@@ -38,6 +48,10 @@ impl GameWorld {
     self.enemies.push(Enemy::new(Some(Vec2::new(p.x - w, p.y + h))));
     self.enemies.push(Enemy::new(Some(Vec2::new(p.x + w, p.y - h))));
     self.enemies.push(Enemy::new(Some(Vec2::new(p.x + w, p.y + h))));
+  }
+
+  fn spawn_initial_walls(&mut self) {
+    for _ in 0..4 { self.walls.push(Wall::new()) }
   }
 
   pub fn handle_input(&mut self) {
@@ -68,8 +82,14 @@ impl GameWorld {
   fn resolve_collisions(&mut self) {
     for bullet in &mut self.bullets {
       for enemy in &mut self.enemies {
-        if enemy.is_alive() && bullet.collides_with(enemy.pos, enemy.radius) {
+        if enemy.is_alive() && check_collision(bullet.pos(), bullet.shape(), enemy.pos(), enemy.shape()) {
           enemy.take_hit();
+          bullet.collided = true;
+        }
+      }
+
+      for wall in &mut self.walls {
+        if check_collision(bullet.pos(), bullet.shape(), wall.pos(), wall.shape()) {
           bullet.collided = true;
         }
       }
@@ -92,5 +112,6 @@ impl GameWorld {
     self.aim.render(); 
     for bullet in &self.bullets { bullet.render(); }
     for enemy in &self.enemies { enemy.render(); }
+    for wall in &self.walls { wall.render(); }
   }
 }

@@ -10,7 +10,7 @@ pub const AIM_SCALE_AFTER_CLICK: f32 = 1.6;
 
 pub const BULLET_RADIUS: f32 = 4.0;
 pub const BULLET_COLOR: Color = WHITE;
-pub const BULLET_VEL: f32 = 1000.0; // pixels-per-second with dt
+pub const BULLET_VEL: f32 = 400.0; // pixels-per-second with dt
 
 pub const ENEMY_RADIUS: f32 = 15.0;
 pub const ENEMY_BORDER_THICKNESS: f32 = 3.0;
@@ -23,3 +23,5 @@ pub const PLAYER_RADIUS: f32 = 15.0;
 pub const PLAYER_BORDER_THICKNESS: f32 = 3.0;
 pub const PLAYER_COLOR: Color = WHITE;
 pub const PLAYER_BASE_SPEED: f32 = 300.0; // pixels-per-second with dt
+
+pub const WALL_COLOR: Color = BROWN;

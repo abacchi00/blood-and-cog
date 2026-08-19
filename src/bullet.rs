@@ -1,6 +1,11 @@
 use macroquad::prelude::*;
 
-use crate::traits::{Renderable, Updatable, Expirable};
+use crate::traits::{
+  Renderable,
+  Updatable,
+  Expirable,
+  Collidable, CollisionShape,
+};
 use crate::config::*;
 
 pub struct Bullet {
@@ -22,18 +27,6 @@ impl Bullet {
       radius: BULLET_RADIUS,
       collided: false,
     }
-  }
-
-  pub fn collides_with(&self, obj_pos: Vec2, obj_radius: f32) -> bool {
-    let dx = self.pos.x - obj_pos.x;
-    let dy = self.pos.y - obj_pos.y;
-    
-    let c_sqrd = (dx * dx) + (dy * dy);
-    
-    let radius_sum = self.radius + obj_radius;
-    let radius_sum_sqrd = radius_sum * radius_sum;
-    
-    c_sqrd < radius_sum_sqrd
   }
 
   pub fn is_within_bounds(&self) -> bool {
@@ -62,5 +55,12 @@ impl Updatable for Bullet {
 impl Expirable for Bullet {
   fn should_clean(&self) -> bool {
     self.collided || !self.is_within_bounds()
+  }
+}
+
+impl Collidable for Bullet {
+  fn pos(&self) -> Vec2 { self.pos }
+  fn shape(&self) -> CollisionShape {
+    CollisionShape::Circle { radius: self.radius }
   }
 }
