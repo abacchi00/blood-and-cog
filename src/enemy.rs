@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 
-use crate::traits::Renderable;
+use crate::traits::{Renderable, Updatable};
 
 const ENEMY_RADIUS: f32 = 15.0;
 const ENEMY_BORDER_THICKNESS: f32 = 3.0;
@@ -37,10 +37,6 @@ impl Enemy {
   pub fn is_alive(&self) -> bool {
     self.life > 0.0
   }
-
-  pub fn update_pos(&mut self, _dt: f32) {
-    // TODO
-  }
 }
 
 impl Renderable for Enemy {
@@ -48,5 +44,11 @@ impl Renderable for Enemy {
     draw_circle(self.pos.x, self.pos.y, self.radius, ENEMY_COLOR);
     draw_circle(self.pos.x, self.pos.y, self.radius - ENEMY_BORDER_THICKNESS, BG_COLOR);
     draw_text(format!("{}", self.life), self.pos.x - self.radius, self.pos.y + self.radius * 2.0, 20.0, WHITE);
+  }
+}
+
+impl Updatable for Enemy {
+  fn update(&mut self, _dt: f32, _world_width: f32, _world_height: f32) {
+    // TODO
   }
 }

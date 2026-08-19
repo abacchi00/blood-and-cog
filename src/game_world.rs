@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 
-use crate::traits::Renderable;
+use crate::traits::{Renderable, Updatable};
 
 use crate::player::Player;
 use crate::bullet::Bullet;
@@ -53,11 +53,14 @@ impl GameWorld {
   }
 
   pub fn update(&mut self, dt: f32) {
-    self.player.update_pos(dt);
-    self.aim.update(dt);
+    let sw = screen_width();
+    let sh = screen_height();
+
+    self.player.update(dt, sw, sh);
+    self.aim.update(dt, sw, sh);
     
-    for bullet in &mut self.bullets { bullet.update_pos(dt); }
-    for enemy in &mut self.enemies { enemy.update_pos(dt); }
+    for bullet in &mut self.bullets { bullet.update(dt, sw, sh); }
+    for enemy in &mut self.enemies { enemy.update(dt, sw, sh); }
 
     self.resolve_collisions();
     self.cleanup_and_spawn();
@@ -87,18 +90,12 @@ impl GameWorld {
     }
   }
 
-  fn draw_entities<T: Renderable>(entities: &[T]) {
-    for entity in entities {
-      entity.render();
-    }
-  }
-
   pub fn render(&self) {
     clear_background(BLACK);
 
-    Self::draw_entities(&self.bullets);
-    Self::draw_entities(&self.enemies);
     self.player.render();
     self.aim.render(); 
+    for bullet in &self.bullets { bullet.render(); }
+    for enemy in &self.enemies { enemy.render(); }
   }
 }

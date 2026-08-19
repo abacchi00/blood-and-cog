@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 
-use crate::traits::Renderable;
+use crate::traits::{Renderable, Updatable};
 
 const AIM_COLOR: Color = WHITE;
 const AIM_BASE_LENGTH: f32 = 10.0;
@@ -19,11 +19,6 @@ impl Aim {
 
   pub fn trigger_click(&mut self) {
     self.scale = AIM_SCALE_AFTER_CLICK;
-  }
-
-  pub fn update(&mut self, dt: f32) {
-    // Smoothly animate the scale back to normal (1.0)
-    self.scale = self.scale.lerp(1.0, dt * 10.0);
   }
 }
 
@@ -44,5 +39,12 @@ impl Renderable for Aim {
     draw_rectangle(mx - half_t, my - dist_from_mouse - length, thickness, length, AIM_COLOR);
     // Bottom
     draw_rectangle(mx - half_t, my + dist_from_mouse, thickness, length, AIM_COLOR);
+  }
+}
+
+impl Updatable for Aim {
+  fn update(&mut self, dt: f32, _world_width: f32, _world_height: f32) {
+    // Smoothly animate the scale back to normal (1.0)
+    self.scale = self.scale.lerp(1.0, dt * 10.0);
   }
 }

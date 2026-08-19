@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 
-use crate::traits::Renderable;
+use crate::traits::{Renderable, Updatable};
 
 const BULLET_RADIUS: f32 = 4.0;
 const BULLET_COLOR: Color = WHITE;
@@ -25,10 +25,6 @@ impl Bullet {
       radius: BULLET_RADIUS,
       collided: false,
     }
-  }
-
-  pub fn update_pos(&mut self, dt: f32) {
-    self.pos += self.dir * self.vel * dt;
   }
 
   pub fn collides_with(&self, obj_pos: Vec2, obj_radius: f32) -> bool {
@@ -57,5 +53,11 @@ impl Bullet {
 impl Renderable for Bullet {
   fn render(&self) {
     draw_circle(self.pos.x, self.pos.y, self.radius, BULLET_COLOR);
+  }
+}
+
+impl Updatable for Bullet {
+  fn update(&mut self, dt: f32, _world_width: f32, _world_height: f32) {
+    self.pos += self.dir * self.vel * dt;
   }
 }

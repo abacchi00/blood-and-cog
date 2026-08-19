@@ -1,7 +1,7 @@
 use macroquad::prelude::*;
 
 use crate::direction::Direction;
-use crate::traits::Renderable;
+use crate::traits::{Renderable, Updatable};
 
 const PLAYER_RADIUS: f32 = 15.0;
 const PLAYER_BORDER_THICKNESS: f32 = 3.0;
@@ -30,8 +30,17 @@ impl Player {
     if is_key_down(KeyCode::A) || is_key_down(KeyCode::Left) { self.dirs.push(Direction::Left); }
     if is_key_down(KeyCode::D) || is_key_down(KeyCode::Right) { self.dirs.push(Direction::Right); }
 }
+}
 
-  pub fn update_pos(&mut self, dt: f32) {
+impl Renderable for Player {
+  fn render(&self) {
+    draw_circle(self.pos.x, self.pos.y, PLAYER_RADIUS, PLAYER_COLOR);
+    draw_circle(self.pos.x, self.pos.y, PLAYER_RADIUS - PLAYER_BORDER_THICKNESS, BG_COLOR);
+  }
+}
+
+impl Updatable for Player {
+  fn update(&mut self, dt: f32, _world_width: f32, _world_height: f32) {
     let mut dx = 0.0f32;
     let mut dy = 0.0f32;
 
@@ -52,12 +61,5 @@ impl Player {
 
     self.pos.x += dx * PLAYER_BASE_SPEED * dt;
     self.pos.y += dy * PLAYER_BASE_SPEED * dt;
-  }
-}
-
-impl Renderable for Player {
-  fn render(&self) {
-    draw_circle(self.pos.x, self.pos.y, PLAYER_RADIUS, PLAYER_COLOR);
-    draw_circle(self.pos.x, self.pos.y, PLAYER_RADIUS - PLAYER_BORDER_THICKNESS, BG_COLOR);
   }
 }
