@@ -1,12 +1,7 @@
 use macroquad::prelude::*;
 
 use crate::traits::{Renderable, Updatable};
-
-const AIM_COLOR: Color = WHITE;
-const AIM_BASE_LENGTH: f32 = 10.0;
-const AIM_BASE_THICKNESS: f32 = 3.0;
-const AIM_BASE_MOUSE_DISTANCE: f32 = 8.0;
-const AIM_SCALE_AFTER_CLICK: f32 = 1.6;
+use crate::config::*;
 
 pub struct Aim {
   scale: f32,

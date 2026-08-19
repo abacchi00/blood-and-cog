@@ -1,10 +1,7 @@
 use macroquad::prelude::*;
 
 use crate::traits::{Renderable, Updatable, Expirable};
-
-const BULLET_RADIUS: f32 = 4.0;
-const BULLET_COLOR: Color = WHITE;
-const BULLET_VEL: f32 = 1000.0; // pixels-per-second with dt
+use crate::config::*;
 
 pub struct Bullet {
   pub pos: Vec2,

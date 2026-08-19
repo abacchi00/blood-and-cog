@@ -1,13 +1,12 @@
 use macroquad::prelude::*;
 
 use crate::traits::{Renderable, Updatable, Expirable};
+use crate::config::*;
 
 use crate::player::Player;
 use crate::bullet::Bullet;
 use crate::aim::Aim;
 use crate::enemy::Enemy;
-
-const MIN_ENEMIES_COUNT: usize = 4;
 
 pub struct GameWorld {
   player: Player,

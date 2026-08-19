@@ -7,6 +7,7 @@ mod bullet;
 mod aim;
 mod enemy;
 mod game_world;
+mod config;
 
 use crate::game_world::GameWorld;
 

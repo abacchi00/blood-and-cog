@@ -1,12 +1,7 @@
 use macroquad::prelude::*;
 
 use crate::traits::{Renderable, Updatable, Expirable};
-
-const ENEMY_RADIUS: f32 = 15.0;
-const ENEMY_BORDER_THICKNESS: f32 = 3.0;
-const ENEMY_COLOR: Color = Color::new(1.0, 0.5, 0.5, 1.0); // light-red / salmon
-const ENEMY_INITIAL_LIFE: f32 = 100.0;
-const BG_COLOR: Color = BLACK; // todo: move this to global consts
+use crate::config::*;
 
 pub struct Enemy {
   pub pos: Vec2,

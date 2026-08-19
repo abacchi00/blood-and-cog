@@ -2,12 +2,7 @@ use macroquad::prelude::*;
 
 use crate::direction::Direction;
 use crate::traits::{Renderable, Updatable};
-
-const PLAYER_RADIUS: f32 = 15.0;
-const PLAYER_BORDER_THICKNESS: f32 = 3.0;
-const PLAYER_COLOR: Color = WHITE;
-const BG_COLOR: Color = BLACK; // todo: move this to global consts
-const PLAYER_BASE_SPEED: f32 = 300.0; // pixels-per-second with dt
+use crate::config::*;
 
 pub struct Player {
   pub dirs: Vec<Direction>,
