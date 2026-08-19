@@ -108,10 +108,10 @@ impl GameWorld {
   pub fn render(&self) {
     clear_background(BLACK);
 
-    self.player.render();
-    self.aim.render(); 
     for bullet in &self.bullets { bullet.render(); }
     for enemy in &self.enemies { enemy.render(); }
     for wall in &self.walls { wall.render(); }
+    self.player.render();
+    self.aim.render(); 
   }
 }
