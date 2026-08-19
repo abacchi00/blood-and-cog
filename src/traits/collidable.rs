@@ -28,6 +28,7 @@ pub fn check_collision(pos_a: Vec2, shape_a: CollisionShape, pos_b: Vec2, shape_
       circle_to_rect(pos_b, r, pos_a, w, h)
     }
 
+    // TODO: fix
     (CollisionShape::Rectangle { w: w1, h: h1 }, CollisionShape::Rectangle { w: w2, h: h2 }) => {
       let a_min_x = pos_a.x - w1 / 2.0;
       let a_max_x = pos_a.x + w1 / 2.0;
@@ -45,8 +46,8 @@ pub fn check_collision(pos_a: Vec2, shape_a: CollisionShape, pos_b: Vec2, shape_
 }
 
 fn circle_to_rect(c_pos: Vec2, r: f32, rect_pos: Vec2, w: f32, h: f32) -> bool {
-  let closest_x = c_pos.x.clamp(rect_pos.x - w / 2.0, rect_pos.x + w / 2.0);
-  let closest_y = c_pos.y.clamp(rect_pos.y - h / 2.0, rect_pos.y + h / 2.0);
+  let closest_x = c_pos.x.clamp(rect_pos.x, rect_pos.x + w);
+  let closest_y = c_pos.y.clamp(rect_pos.y, rect_pos.y + h);
 
   let dx = c_pos.x - closest_x;
   let dy = c_pos.y - closest_y;

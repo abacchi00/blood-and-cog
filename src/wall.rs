@@ -13,15 +13,14 @@ pub struct Wall {
 }
 
 impl Wall {
-  pub fn new() -> Self {
-    let width = 20.0;
-    let height = 20.0;
-    
+  pub fn new(opt_w: Option<f32>, opt_h: Option<f32>, opt_x: Option<f32>, opt_y: Option<f32>) -> Self {
+    let width = opt_w.unwrap_or(20.0);
+    let height = opt_h.unwrap_or(20.0);
+    let x = opt_x.unwrap_or(rand::gen_range(width, screen_width() - width));
+    let y = opt_y.unwrap_or(rand::gen_range(height, screen_height() - height));
+
     Self {  
-      pos: Vec2::new(
-        rand::gen_range(width, screen_width() - width),
-        rand::gen_range(height, screen_height() - height),
-      ),
+      pos: Vec2::new(x, y),
       width,
       height,
     }
@@ -30,7 +29,7 @@ impl Wall {
 
 impl Renderable for Wall {
   fn render(&self) {
-    draw_rectangle(self.pos.x - self.width/2.0, self.pos.y - self.height/2.0, self.width, self.height, WALL_COLOR);
+    draw_rectangle(self.pos.x, self.pos.y, self.width, self.height, WALL_COLOR);
   }
 }
 
