@@ -15,6 +15,7 @@ enum GridCellType {
 use GridCellType::*;
 
 pub struct Arena {
+  grid: Vec<Vec<GridCellType>>,
   pub walls: Vec<Wall>,
   pub floors: Vec<Floor>,
   pub available_grid_positions: Vec<(usize, usize)>,
@@ -73,6 +74,7 @@ impl Arena {
     });
 
     Self {
+      grid,
       walls,
       floors,
       available_grid_positions,
@@ -96,5 +98,30 @@ impl Arena {
   pub fn render(&self) {
     for wall in &self.walls { wall.render(); }
     for floor in &self.floors { floor.render(); }
+  }
+
+  // O(1) collision check, using arena grid as advantage
+  pub fn is_position_blocked(&self, pos: Vec2, radius: f32) -> bool {
+    let check_points = [
+      vec2(pos.x - radius, pos.y - radius),
+      vec2(pos.x + radius, pos.y - radius),
+      vec2(pos.x - radius, pos.y + radius),
+      vec2(pos.x + radius, pos.y + radius),
+    ];
+
+    for pt in &check_points {
+      let col = (pt.x / GRID_CELL_SIZE) as isize;
+      let row = (pt.y / GRID_CELL_SIZE) as isize;
+
+      if row >= 0 && row < self.grid.len() as isize && col >= 0 && col < self.grid[0].len() as isize {
+        if let GridCellType::W = self.grid[row as usize][col as usize] {
+          return true;
+        }
+      } else {
+        return true;
+      }
+    }
+
+    false
   }
 }

@@ -81,16 +81,14 @@ impl GameWorld {
 
   fn resolve_collisions(&mut self) {
     for bullet in &mut self.bullets {
-      for enemy in &mut self.enemies {
-        if enemy.is_alive() && check_collision(bullet.pos(), bullet.shape(), enemy.pos(), enemy.shape()) {
-          enemy.take_hit();
-          bullet.collided = true;
-        }
-      }
-
-      for wall in &self.arena.walls {
-        if check_collision(bullet.pos(), bullet.shape(), wall.pos(), wall.shape()) {
-          bullet.collided = true;
+      if self.arena.is_position_blocked(bullet.pos, bullet.radius) {
+        bullet.collided = true;
+      } else {
+        for enemy in &mut self.enemies {
+          if enemy.is_alive() && check_collision(bullet.pos(), bullet.shape(), enemy.pos(), enemy.shape()) {
+            enemy.take_hit();
+            bullet.collided = true;
+          }
         }
       }
     }
