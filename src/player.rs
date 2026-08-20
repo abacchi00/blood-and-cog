@@ -1,7 +1,7 @@
 use macroquad::prelude::*;
 
 use crate::direction::Direction;
-use crate::traits::{Renderable, Updatable};
+use crate::traits::{Renderable, Updatable, Collidable, CollisionShape};
 use crate::config::*;
 
 pub struct Player {
@@ -55,5 +55,12 @@ impl Updatable for Player {
 
     self.pos.x += dx * PLAYER_BASE_SPEED * dt;
     self.pos.y += dy * PLAYER_BASE_SPEED * dt;
+  }
+}
+
+impl Collidable for Player {
+  fn pos(&self) -> Vec2 { self.pos }
+  fn shape(&self) -> CollisionShape {
+    CollisionShape::Circle { radius: PLAYER_RADIUS }
   }
 }
