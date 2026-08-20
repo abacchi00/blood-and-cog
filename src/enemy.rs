@@ -2,7 +2,6 @@ use macroquad::prelude::*;
 
 use crate::traits::{
   Renderable,
-  Updatable,
   Expirable,
   Collidable, CollisionShape,
 };
@@ -23,6 +22,11 @@ impl Enemy {
     }
   }
 
+  pub fn calculate_movement_delta(&self, player_pos: Vec2, dt: f32) -> Vec2 {
+    let direction = (player_pos - self.pos).normalize_or_zero();
+    direction * ENEMY_BASE_SPEED * dt
+  }
+
   pub fn take_hit(&mut self) {
     self.life -= 20.0;
   }
@@ -37,12 +41,6 @@ impl Renderable for Enemy {
     draw_circle(self.pos.x, self.pos.y, self.radius, ENEMY_BORDER_COLOR);
     draw_circle(self.pos.x, self.pos.y, self.radius - ENEMY_BORDER_THICKNESS, ENEMY_COLOR);
     draw_text(format!("{}", self.life), self.pos.x - self.radius, self.pos.y + self.radius * 2.0, 20.0, WHITE);
-  }
-}
-
-impl Updatable for Enemy {
-  fn update(&mut self, _dt: f32, _world_width: f32, _world_height: f32) {
-    // TODO
   }
 }
 

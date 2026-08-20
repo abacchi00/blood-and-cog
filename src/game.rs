@@ -76,9 +76,17 @@ impl Game {
     let player_delta = self.player.calculate_movement_delta(self.input_dir, dt);
     Self::move_and_slide(&mut self.player.pos, player_delta, PLAYER_RADIUS, &self.arena);
   
+    let player_pos = self.player.pos;
+    for enemy in &mut self.enemies {
+      if !enemy.is_alive() { continue; }
+
+      let enemy_delta = enemy.calculate_movement_delta(player_pos, dt);
+      
+      Self::move_and_slide(&mut enemy.pos, enemy_delta, enemy.radius, &self.arena);
+    }
+
     self.aim.update(dt, sw, sh);
     self.bullets.update_all(dt, sw, sh);
-    self.enemies.update_all(dt, sw, sh);
   
     self.resolve_collisions();
     self.cleanup_and_spawn();

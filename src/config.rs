@@ -17,13 +17,14 @@ pub const AIM_SCALE_AFTER_CLICK: f32 = 1.6;
 
 pub const BULLET_RADIUS: f32 = 4.0;
 pub const BULLET_COLOR: Color = WHITE;
-pub const BULLET_VEL: f32 = 700.0; // pixels-per-second with dt
+pub const BULLET_BASE_SPEED: f32 = 700.0; // pixels-per-second with dt
 
 pub const ENEMY_RADIUS: f32 = GRID_CELL_SIZE / 2.0;
 pub const ENEMY_BORDER_THICKNESS: f32 = 3.0;
 pub const ENEMY_COLOR: Color = Color::from_hex(0x4e9a06);
 pub const ENEMY_BORDER_COLOR: Color = BLACK;
 pub const ENEMY_INITIAL_LIFE: f32 = 100.0;
+pub const ENEMY_BASE_SPEED: f32 = 120.0;
 
 pub const MIN_ENEMIES_COUNT: usize = 4;
 

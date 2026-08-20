@@ -12,7 +12,7 @@ pub struct Bullet {
   pub pos: Vec2,
   pub radius: f32, 
   pub collided: bool,
-  vel: f32,
+  speed: f32,
   dir: Vec2,
 }
 
@@ -22,7 +22,7 @@ impl Bullet {
 
     Self {
       pos: start_pos,
-      vel: BULLET_VEL,
+      speed: BULLET_BASE_SPEED,
       dir,
       radius: BULLET_RADIUS,
       collided: false,
@@ -46,7 +46,7 @@ impl Renderable for Bullet {
 
 impl Updatable for Bullet {
   fn update(&mut self, dt: f32, _world_width: f32, _world_height: f32) {
-    self.pos += self.dir * self.vel * dt;
+    self.pos += self.dir * self.speed * dt;
   }
 }
 
