@@ -15,6 +15,7 @@ use crate::aim::Aim;
 use crate::enemy::Enemy;
 use crate::wall::Wall;
 use crate::floor::Floor;
+use crate::game_command::GameCommand;
 
 // TODO[refactor]: Create Map struct and impl
 pub struct GameWorld {
@@ -114,7 +115,9 @@ impl GameWorld {
     });
   }
 
-  pub fn handle_input(&mut self) {
+  pub fn handle_input(&mut self) -> GameCommand {
+    if is_key_down(KeyCode::Escape) { return GameCommand::Exit };
+
     self.player.update_input();
 
     let screen_mouse_pos = Vec2::from(mouse_position());
@@ -128,6 +131,8 @@ impl GameWorld {
       self.bullets.push(Bullet::new(self.player.pos, world_mouse_pos));
       self.aim.trigger_click();
     }
+
+    return GameCommand::Continue;
   }
 
   pub fn update(&mut self, dt: f32) {

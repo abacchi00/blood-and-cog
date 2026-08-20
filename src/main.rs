@@ -7,11 +7,13 @@ mod bullet;
 mod aim;
 mod enemy;
 mod game_world;
+mod game_command;
 mod config;
 mod wall;
 mod floor;
 
 use crate::game_world::GameWorld;
+use crate::game_command::GameCommand;
 
 #[macroquad::main("Blood & Cog")]
 async fn main() {
@@ -24,9 +26,13 @@ async fn main() {
   loop {
     let dt = get_frame_time();
 
-    game.handle_input();
-    game.update(dt);
-    game.render();
+    match game.handle_input() {
+      GameCommand::Exit => break,
+      GameCommand::Continue => {
+        game.update(dt);
+        game.render();
+      }
+    }
 
     next_frame().await;
   }
