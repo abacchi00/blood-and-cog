@@ -95,11 +95,6 @@ impl Arena {
     Self::grid_to_world_pos(pos)
   }
 
-  pub fn render(&self) {
-    for wall in &self.walls { wall.render(); }
-    for floor in &self.floors { floor.render(); }
-  }
-
   // O(1) collision check, using arena grid as advantage
   pub fn is_position_blocked(&self, pos: Vec2, radius: f32) -> bool {
     let check_points = [
@@ -123,5 +118,12 @@ impl Arena {
     }
 
     false
+  }
+}
+
+impl Renderable for Arena {
+  fn render(&self) {
+    for wall in &self.walls { wall.render(); }
+    for floor in &self.floors { floor.render(); }
   }
 }
