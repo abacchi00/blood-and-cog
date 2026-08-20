@@ -3,7 +3,7 @@ use macroquad::prelude::*;
 use crate::traits::{
   Renderable, RenderableSlice,
   Updatable, UpdatableSlice,
-  Expirable,
+  ExpirableVec,
   Collidable, 
   check_collision,
 };
@@ -109,8 +109,8 @@ impl Game {
   }
 
   fn cleanup_and_spawn(&mut self) {
-    self.bullets.retain(|b| !b.should_clean());
-    self.enemies.retain(|e| !e.should_clean());
+    self.bullets.clean_expired();
+    self.enemies.clean_expired();
 
     while self.enemies.len() < MIN_ENEMIES_COUNT {
       self.enemies.push(Enemy::new(self.arena.random_available_position()));
