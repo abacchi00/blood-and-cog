@@ -98,10 +98,15 @@ impl GameWorld {
   pub fn handle_input(&mut self) {
     self.player.update_input();
 
-    let mouse_pos = Vec2::from(mouse_position());
+    let screen_mouse_pos = Vec2::from(mouse_position());
+
+    let half_screen = vec2(screen_width() / 2.0, screen_height() / 2.0);
+    let offset_from_center = screen_mouse_pos - half_screen;
+
+    let world_mouse_pos = self.player.pos + offset_from_center;
 
     if is_mouse_button_pressed(MouseButton::Left) {
-      self.bullets.push(Bullet::new(self.player.pos, mouse_pos));
+      self.bullets.push(Bullet::new(self.player.pos, world_mouse_pos));
       self.aim.trigger_click();
     }
   }
@@ -147,12 +152,26 @@ impl GameWorld {
   }
 
   pub fn render(&self) {
+    let camera = self.get_camera();
+    set_camera(&camera);
+
     clear_background(BG_COLOR);
 
     for bullet in &self.bullets { bullet.render(); }
     for enemy in &self.enemies { enemy.render(); }
     for wall in &self.walls { wall.render(); }
     self.player.render();
+    
+    set_default_camera();
+
     self.aim.render(); 
+  }
+
+  fn get_camera(&self) -> Camera2D {
+    Camera2D {
+      target: self.player.pos,
+      zoom: vec2(2.0 / screen_width(), 2.0 / screen_height()),
+      ..Default::default()
+    }
   }
 }

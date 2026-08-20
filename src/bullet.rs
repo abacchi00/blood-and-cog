@@ -30,13 +30,11 @@ impl Bullet {
   }
 
   pub fn is_within_bounds(&self) -> bool {
-    let sw = screen_width();
-    let sh = screen_height();
-    
-    self.pos.x >= 0.0
-      && self.pos.x <= sw
-      && self.pos.y >= 0.0
-      && self.pos.y <= sh
+    // Large, reasonable world boundary box
+    self.pos.x >= -5000.0
+      && self.pos.x <= 5000.0
+      && self.pos.y >= -5000.0
+      && self.pos.y <= 5000.0
   }
 }
 
