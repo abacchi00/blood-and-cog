@@ -14,6 +14,7 @@ use crate::bullet::Bullet;
 use crate::aim::Aim;
 use crate::enemy::Enemy;
 use crate::wall::Wall;
+use crate::floor::Floor;
 
 pub struct GameWorld {
   player: Player,
@@ -21,6 +22,7 @@ pub struct GameWorld {
   bullets: Vec<Bullet>,
   enemies: Vec<Enemy>,
   walls: Vec<Wall>,
+  floors: Vec<Floor>,
 }
 
 impl GameWorld {
@@ -31,6 +33,7 @@ impl GameWorld {
       bullets: Vec::new(),
       enemies: Vec::new(),
       walls: Vec::new(),
+      floors: Vec::new(),
     };
 
     world.spawn_initial_enemies();
@@ -54,39 +57,43 @@ impl GameWorld {
     // TODO: make it a const, or extract to other file
     let wall_map: Vec<Vec<i32>> = Vec::from([
       Vec::from([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]),
-      Vec::from([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]),
-      Vec::from([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]),
-      Vec::from([1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]),
-      Vec::from([1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]),
-      Vec::from([1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]),
-      Vec::from([1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1]),
-      Vec::from([1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]),
-      Vec::from([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1]),
-      Vec::from([1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]),
-      Vec::from([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1]),
-      Vec::from([1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]),
-      Vec::from([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1]),
-      Vec::from([1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1]),
-      Vec::from([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1]),
-      Vec::from([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1]),
-      Vec::from([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1]),
-      Vec::from([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]),
-      Vec::from([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]),
+      Vec::from([1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1]),
+      Vec::from([1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1]),
+      Vec::from([1, 2, 2, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1]),
+      Vec::from([1, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1]),
+      Vec::from([1, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1]),
+      Vec::from([1, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1]),
+      Vec::from([1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1]),
+      Vec::from([1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1]),
+      Vec::from([1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1]),
+      Vec::from([1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1]),
+      Vec::from([1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1]),
+      Vec::from([1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1]),
+      Vec::from([1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 1]),
+      Vec::from([1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 1]),
+      Vec::from([1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 1]),
+      Vec::from([1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 2, 2, 1]),
+      Vec::from([1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1]),
+      Vec::from([1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1]),
       Vec::from([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]),
     ]);
 
-    let wall_w = screen_width() / wall_map.len() as f32;
-    let wall_h = screen_height() / wall_map[0].len() as f32; 
-
     wall_map.iter().enumerate().for_each(|(row_idx, row)| {
       row.iter().enumerate().for_each(|(col_idx, num)| {
-        if *num == 1 {
-          let x = col_idx as f32 * wall_w;
-          let y = row_idx as f32 * wall_h;
+        let x = col_idx as f32 * GRID_CELL_SIZE;
+        let y = row_idx as f32 * GRID_CELL_SIZE;
 
+        if *num == 1 {
           self.walls.push(Wall::new(
-            Some(wall_w),
-            Some(wall_h),
+            Some(GRID_CELL_SIZE),
+            Some(GRID_CELL_SIZE),
+            Some(x),
+            Some(y),
+          ));
+        } else if *num == 2 {
+          self.floors.push(Floor::new(
+            Some(GRID_CELL_SIZE),
+            Some(GRID_CELL_SIZE),
             Some(x),
             Some(y),
           ));
@@ -157,13 +164,15 @@ impl GameWorld {
 
     clear_background(BG_COLOR);
 
+    for wall in &self.walls { wall.render(); }
+    for floor in &self.floors { floor.render(); }
     for bullet in &self.bullets { bullet.render(); }
     for enemy in &self.enemies { enemy.render(); }
-    for wall in &self.walls { wall.render(); }
     self.player.render();
     
     set_default_camera();
 
+    // Need to be after set_default_camera
     self.aim.render(); 
   }
 

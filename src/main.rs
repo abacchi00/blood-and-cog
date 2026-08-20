@@ -9,6 +9,7 @@ mod enemy;
 mod game_world;
 mod config;
 mod wall;
+mod floor;
 
 use crate::game_world::GameWorld;
 
