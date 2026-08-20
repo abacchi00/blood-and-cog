@@ -1,8 +1,8 @@
 use macroquad::prelude::*;
 
 use crate::traits::{
-  Renderable,
-  Updatable,
+  Renderable, RenderableSlice,
+  Updatable, UpdatableSlice,
   Expirable,
   Collidable, 
   check_collision,
@@ -65,9 +65,8 @@ impl Game {
 
     self.player.update(dt, sw, sh);
     self.aim.update(dt, sw, sh);
-    
-    for bullet in &mut self.bullets { bullet.update(dt, sw, sh); }
-    for enemy in &mut self.enemies { enemy.update(dt, sw, sh); }
+    self.bullets.update_all(dt, sw, sh);
+    self.enemies.update_all(dt, sw, sh);
 
     self.resolve_collisions();
     self.cleanup_and_spawn();
@@ -80,8 +79,8 @@ impl Game {
     clear_background(BG_COLOR);
 
     self.arena.render(); 
-    for bullet in &self.bullets { bullet.render(); }
-    for enemy in &self.enemies { enemy.render(); }
+    self.bullets.render_all();
+    self.enemies.render_all();
     self.player.render();
 
     set_default_camera();
