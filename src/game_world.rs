@@ -23,39 +23,15 @@ pub struct GameWorld {
   enemies: Vec<Enemy>,
   walls: Vec<Wall>,
   floors: Vec<Floor>,
+  map_grid: Vec<Vec<i32>>,
+  map_center: Vec2,
+  map_w: f32,
+  map_h: f32,
 }
 
 impl GameWorld {
   pub fn new() -> Self {
-    let mut world = Self {
-      player: Player::new(),
-      aim: Aim::new(),
-      bullets: Vec::new(),
-      enemies: Vec::new(),
-      walls: Vec::new(),
-      floors: Vec::new(),
-    };
-
-    world.spawn_initial_enemies();
-    world.spawn_initial_walls();
-
-    world
-  }
-
-  fn spawn_initial_enemies(&mut self) {
-    let w = screen_width() / 3.0;
-    let h = screen_height() / 3.0;
-    let p = self.player.pos;
-    
-    self.enemies.push(Enemy::new(Some(Vec2::new(p.x - w, p.y - h))));
-    self.enemies.push(Enemy::new(Some(Vec2::new(p.x - w, p.y + h))));
-    self.enemies.push(Enemy::new(Some(Vec2::new(p.x + w, p.y - h))));
-    self.enemies.push(Enemy::new(Some(Vec2::new(p.x + w, p.y + h))));
-  }
-
-  fn spawn_initial_walls(&mut self) {
-    // TODO: make it a const, or extract to other file
-    let wall_map: Vec<Vec<i32>> = Vec::from([
+    let map_grid: Vec<Vec<i32>> = Vec::from([
       Vec::from([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]),
       Vec::from([1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1]),
       Vec::from([1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1]),
@@ -78,7 +54,46 @@ impl GameWorld {
       Vec::from([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]),
     ]);
 
-    wall_map.iter().enumerate().for_each(|(row_idx, row)| {
+    let map_center = vec2(
+      map_grid.len() as f32 * GRID_CELL_SIZE / 2.0,
+      map_grid[0].len() as f32 * GRID_CELL_SIZE / 2.0,
+    );
+
+    let map_w = map_grid.len() as f32 * GRID_CELL_SIZE;
+    let map_h = map_grid[0].len() as f32 * GRID_CELL_SIZE;
+    
+    let mut world = Self {
+      player: Player::new(map_center),
+      aim: Aim::new(),
+      bullets: Vec::new(),
+      enemies: Vec::new(),
+      walls: Vec::new(),
+      floors: Vec::new(),
+      map_grid,
+      map_center,
+      map_w,
+      map_h,
+    };
+
+    world.spawn_initial_enemies();
+    world.spawn_initial_walls();
+
+    world
+  }
+
+  fn spawn_initial_enemies(&mut self) {
+    let w = self.map_w / 3.0;
+    let h = self.map_h / 3.0;
+    let c = self.map_center;
+    
+    self.enemies.push(Enemy::new(Some(Vec2::new(c.x - w, c.y - h))));
+    self.enemies.push(Enemy::new(Some(Vec2::new(c.x - w, c.y + h))));
+    self.enemies.push(Enemy::new(Some(Vec2::new(c.x + w, c.y - h))));
+    self.enemies.push(Enemy::new(Some(Vec2::new(c.x + w, c.y + h))));
+  }
+
+  fn spawn_initial_walls(&mut self) {
+    self.map_grid.iter().enumerate().for_each(|(row_idx, row)| {
       row.iter().enumerate().for_each(|(col_idx, num)| {
         let x = col_idx as f32 * GRID_CELL_SIZE;
         let y = row_idx as f32 * GRID_CELL_SIZE;
@@ -149,12 +164,19 @@ impl GameWorld {
     }
   }
 
+  fn random_map_coordinate(&self) -> Vec2 {
+    return vec2(
+      rand::gen_range(self.map_center.x - self.map_w / 2.0, self.map_center.x + self.map_w / 2.0),
+      rand::gen_range(self.map_center.y - self.map_h / 2.0, self.map_center.y + self.map_h / 2.0),
+    );
+  }
+
   fn cleanup_and_spawn(&mut self) {
     self.bullets.retain(|b| !b.should_clean());
     self.enemies.retain(|e| !e.should_clean());
 
     while self.enemies.len() < MIN_ENEMIES_COUNT {
-      self.enemies.push(Enemy::new(None));
+      self.enemies.push(Enemy::new(Some(self.random_map_coordinate())));
     }
   }
 

@@ -10,10 +10,10 @@ pub struct Player {
 }
 
 impl Player {
-  pub fn new() -> Self {
+  pub fn new(pos: Vec2) -> Self {
     Self {
       dirs: Vec::new(),
-      pos: Vec2::new(screen_width()/2.0, screen_height()/2.0),
+      pos,
     }
   }
 
