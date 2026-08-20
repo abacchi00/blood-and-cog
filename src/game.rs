@@ -63,7 +63,9 @@ impl Game {
     let sw = screen_width();
     let sh = screen_height();
 
-    self.player.update(dt, sw, sh);
+    let player_delta = self.player.calculate_movement_delta(dt);
+    move_and_slide(&mut self.player.pos, player_delta, PLAYER_RADIUS, &self.arena);
+
     self.aim.update(dt, sw, sh);
     self.bullets.update_all(dt, sw, sh);
     self.enemies.update_all(dt, sw, sh);
@@ -116,13 +118,24 @@ impl Game {
       self.enemies.push(Enemy::new(self.arena.random_available_position()));
     }
   }
-  
 
   fn get_camera(&self) -> Camera2D {
     Camera2D {
       target: self.player.pos,
       zoom: vec2(2.0 / screen_width(), 2.0 / screen_height()),
       ..Default::default()
+    }
+  }
+
+  fn move_and_slide(&self, pos: &mut Vec2, delta: Vec2, radius: f32) {
+    let next_x = vec2(pos.x + delta.x, pos.y);
+    if !self.arena.is_position_blocked(next_x, radius) {
+      pos.x = next_x.x;
+    }
+  
+    let next_y = vec2(pos.x, pos.y + delta.y);
+    if !self.arena.is_position_blocked(next_y, radius) {
+      pos.y = next_y.y;
     }
   }
 }
