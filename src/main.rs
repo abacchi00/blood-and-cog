@@ -21,7 +21,7 @@ async fn main() {
 
   macroquad::rand::srand(miniquad::date::now() as u64);
 
-  let mut game = Game::new();
+  let mut game = Game::new().await;
 
   loop {
     let dt = get_frame_time();

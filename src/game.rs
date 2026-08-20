@@ -1,4 +1,5 @@
 use macroquad::prelude::*;
+use macroquad::audio::{load_sound, play_sound_once, Sound};
 
 use crate::traits::{
   Renderable, RenderableSlice,
@@ -23,12 +24,15 @@ pub struct Game {
   enemies: Vec<Enemy>,
   arena: Arena,
   input_dir: Vec2,
+  shot_sound: Sound,
 }
 
 impl Game {
-  pub fn new() -> Self {
+  pub async fn new() -> Self {
     let arena = Arena::new();
     let initial_player_pos = arena.initial_player_pos;
+
+    let shot_sound = load_sound("res/gun_shot.wav").await.unwrap();
 
     let mut world = Self {
       player: Player::new(initial_player_pos),
@@ -37,6 +41,7 @@ impl Game {
       enemies: Vec::new(),
       arena,
       input_dir: Vec2::ZERO,
+      shot_sound,
     };
 
     world.spawn_initial_enemies();
@@ -64,6 +69,8 @@ impl Game {
     if is_mouse_button_pressed(MouseButton::Left) {
       self.bullets.push(Bullet::new(self.player.pos, world_mouse_pos));
       self.aim.trigger_click();
+
+      play_sound_once(&self.shot_sound);
     }
 
     GameCommand::Continue
