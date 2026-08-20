@@ -1,4 +1,2 @@
-- refactor: make the map struct/impl
 - feat: make enemies unable to spawn in a position overlapping the player
-- feat: make the player collision with walls logic
 - feat: make the enemies move towards the player
