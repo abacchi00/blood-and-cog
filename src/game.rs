@@ -22,6 +22,7 @@ pub struct Game {
   bullets: Vec<Bullet>,
   enemies: Vec<Enemy>,
   arena: Arena,
+  input_dir: Vec2,
 }
 
 impl Game {
@@ -35,6 +36,7 @@ impl Game {
       bullets: Vec::new(),
       enemies: Vec::new(),
       arena,
+      input_dir: Vec2::ZERO,
     };
 
     world.spawn_initial_enemies();
@@ -42,10 +44,18 @@ impl Game {
   }
 
   pub fn handle_input(&mut self) -> GameCommand {
+    // Handle keyboard input
     if is_key_down(KeyCode::Escape) { return GameCommand::Exit; };
 
-    self.player.update_input();
+    let mut input_dir = Vec2::ZERO;
+    if is_key_down(KeyCode::W) || is_key_down(KeyCode::Up) { input_dir.y -= 1.0; }
+    if is_key_down(KeyCode::S) || is_key_down(KeyCode::Down) { input_dir.y += 1.0; }
+    if is_key_down(KeyCode::A) || is_key_down(KeyCode::Left) { input_dir.x -= 1.0; }
+    if is_key_down(KeyCode::D) || is_key_down(KeyCode::Right) { input_dir.x += 1.0; }
+    
+    self.input_dir = input_dir;
 
+    // Handle mouse input
     let screen_mouse_pos = Vec2::from(mouse_position());
     let half_screen = vec2(screen_width() / 2.0, screen_height() / 2.0);
     let offset_from_center = screen_mouse_pos - half_screen;
@@ -62,14 +72,14 @@ impl Game {
   pub fn update(&mut self, dt: f32) {
     let sw = screen_width();
     let sh = screen_height();
-
-    let player_delta = self.player.calculate_movement_delta(dt);
-    move_and_slide(&mut self.player.pos, player_delta, PLAYER_RADIUS, &self.arena);
-
+  
+    let player_delta = self.player.calculate_movement_delta(self.input_dir, dt);
+    Self::move_and_slide(&mut self.player.pos, player_delta, PLAYER_RADIUS, &self.arena);
+  
     self.aim.update(dt, sw, sh);
     self.bullets.update_all(dt, sw, sh);
     self.enemies.update_all(dt, sw, sh);
-
+  
     self.resolve_collisions();
     self.cleanup_and_spawn();
   }
@@ -127,14 +137,14 @@ impl Game {
     }
   }
 
-  fn move_and_slide(&self, pos: &mut Vec2, delta: Vec2, radius: f32) {
+  fn move_and_slide(pos: &mut Vec2, delta: Vec2, radius: f32, arena: &Arena) {
     let next_x = vec2(pos.x + delta.x, pos.y);
-    if !self.arena.is_position_blocked(next_x, radius) {
+    if !arena.is_position_blocked(next_x, radius) {
       pos.x = next_x.x;
     }
-  
+
     let next_y = vec2(pos.x, pos.y + delta.y);
-    if !self.arena.is_position_blocked(next_y, radius) {
+    if !arena.is_position_blocked(next_y, radius) {
       pos.y = next_y.y;
     }
   }

@@ -2,7 +2,6 @@ use macroquad::prelude::*;
 
 mod traits;
 mod player;
-mod direction;
 mod bullet;
 mod aim;
 mod enemy;

@@ -1,41 +1,22 @@
 use macroquad::prelude::*;
 
-use crate::direction::Direction;
 use crate::traits::{Renderable, Collidable, CollisionShape};
 use crate::config::*;
 
 pub struct Player {
-  pub dirs: Vec<Direction>,
   pub pos: Vec2,
 }
+
 impl Player {
   pub fn new(pos: Vec2) -> Self {
     Self {
-      dirs: Vec::new(),
       pos,
     }
   }
 
-  pub fn update_input(&mut self) {
-    self.dirs.clear();
-    if is_key_down(KeyCode::W) || is_key_down(KeyCode::Up) { self.dirs.push(Direction::Up); }
-    if is_key_down(KeyCode::S) || is_key_down(KeyCode::Down) { self.dirs.push(Direction::Down); }
-    if is_key_down(KeyCode::A) || is_key_down(KeyCode::Left) { self.dirs.push(Direction::Left); }
-    if is_key_down(KeyCode::D) || is_key_down(KeyCode::Right) { self.dirs.push(Direction::Right); }
-  }
-
-  pub fn calculate_movement_delta(&self, dt: f32) -> Vec2 {
-    let mut dx = 0.0f32;
-    let mut dy = 0.0f32;
-
-    for dir in &self.dirs {
-      match dir {
-        Direction::Up => dy -= 1.0,
-        Direction::Down => dy += 1.0,
-        Direction::Left => dx -= 1.0,
-        Direction::Right => dx += 1.0,
-      }
-    }
+  pub fn calculate_movement_delta(&self, input_dir: Vec2, dt: f32) -> Vec2 {
+    let mut dx = input_dir.x;
+    let mut dy = input_dir.y;
 
     if dx != 0.0 && dy != 0.0 {
       let normalization = 1.0f32 / (2.0f32).sqrt();
