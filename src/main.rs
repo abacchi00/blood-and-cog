@@ -11,6 +11,7 @@ mod game_command;
 mod config;
 mod wall;
 mod floor;
+mod arena;
 
 use crate::game_world::GameWorld;
 use crate::game_command::GameCommand;
