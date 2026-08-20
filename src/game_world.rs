@@ -16,6 +16,7 @@ use crate::enemy::Enemy;
 use crate::wall::Wall;
 use crate::floor::Floor;
 
+// TODO[refactor]: Create Map struct and impl
 pub struct GameWorld {
   player: Player,
   aim: Aim,
@@ -24,9 +25,7 @@ pub struct GameWorld {
   walls: Vec<Wall>,
   floors: Vec<Floor>,
   map_grid: Vec<Vec<i32>>,
-  map_center: Vec2,
-  map_w: f32,
-  map_h: f32,
+  map_available_grid_positions: Vec<(usize, usize)>,
 }
 
 impl GameWorld {
@@ -54,25 +53,28 @@ impl GameWorld {
       Vec::from([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]),
     ]);
 
-    let map_center = vec2(
-      map_grid.len() as f32 * GRID_CELL_SIZE / 2.0,
-      map_grid[0].len() as f32 * GRID_CELL_SIZE / 2.0,
-    );
+    let map_initial_player_grid_pos: (usize, usize) = (9, 10);
 
-    let map_w = map_grid.len() as f32 * GRID_CELL_SIZE;
-    let map_h = map_grid[0].len() as f32 * GRID_CELL_SIZE;
-    
+    let mut map_available_grid_positions: Vec<(usize, usize)> = Vec::new();
+
+    map_grid.iter().enumerate().for_each(|(row_idx, row)| {
+      row.iter().enumerate().for_each(|(col_idx, num)| {
+        if *num != 1 {
+          map_available_grid_positions.push((col_idx, row_idx))
+        }
+      })
+    });
+
+
     let mut world = Self {
-      player: Player::new(map_center),
+      player: Player::new(GameWorld::grid_position_to_map_coordinate(map_initial_player_grid_pos)),
       aim: Aim::new(),
       bullets: Vec::new(),
       enemies: Vec::new(),
       walls: Vec::new(),
       floors: Vec::new(),
       map_grid,
-      map_center,
-      map_w,
-      map_h,
+      map_available_grid_positions,
     };
 
     world.spawn_initial_enemies();
@@ -82,14 +84,9 @@ impl GameWorld {
   }
 
   fn spawn_initial_enemies(&mut self) {
-    let w = self.map_w / 3.0;
-    let h = self.map_h / 3.0;
-    let c = self.map_center;
-    
-    self.enemies.push(Enemy::new(Some(Vec2::new(c.x - w, c.y - h))));
-    self.enemies.push(Enemy::new(Some(Vec2::new(c.x - w, c.y + h))));
-    self.enemies.push(Enemy::new(Some(Vec2::new(c.x + w, c.y - h))));
-    self.enemies.push(Enemy::new(Some(Vec2::new(c.x + w, c.y + h))));
+    for _ in 0..4 {
+      self.enemies.push(Enemy::new(self.random_available_map_coordinate()));
+    }
   }
 
   fn spawn_initial_walls(&mut self) {
@@ -164,11 +161,19 @@ impl GameWorld {
     }
   }
 
-  fn random_map_coordinate(&self) -> Vec2 {
+  fn grid_position_to_map_coordinate((grid_x, grid_y): (usize, usize)) -> Vec2 {
     return vec2(
-      rand::gen_range(self.map_center.x - self.map_w / 2.0, self.map_center.x + self.map_w / 2.0),
-      rand::gen_range(self.map_center.y - self.map_h / 2.0, self.map_center.y + self.map_h / 2.0),
+      GRID_CELL_SIZE * grid_x as f32 + GRID_CELL_SIZE / 2.0,
+      GRID_CELL_SIZE * grid_y as f32 + GRID_CELL_SIZE / 2.0,
     );
+  }
+
+  fn random_available_map_coordinate(&self) -> Vec2 {
+    let rand_idx = rand::gen_range(0, self.map_available_grid_positions.len());
+    let random_position = self.map_available_grid_positions[rand_idx];
+    let random_coordinate = GameWorld::grid_position_to_map_coordinate(random_position);
+  
+    return random_coordinate;
   }
 
   fn cleanup_and_spawn(&mut self) {
@@ -176,7 +181,7 @@ impl GameWorld {
     self.enemies.retain(|e| !e.should_clean());
 
     while self.enemies.len() < MIN_ENEMIES_COUNT {
-      self.enemies.push(Enemy::new(Some(self.random_map_coordinate())));
+      self.enemies.push(Enemy::new(self.random_available_map_coordinate()));
     }
   }
 
@@ -191,7 +196,7 @@ impl GameWorld {
     for bullet in &self.bullets { bullet.render(); }
     for enemy in &self.enemies { enemy.render(); }
     self.player.render();
-    
+
     set_default_camera();
 
     // Need to be after set_default_camera

@@ -15,14 +15,7 @@ pub struct Enemy {
 }
 
 impl Enemy {
-  pub fn new(opt_pos: Option<Vec2>) -> Self {
-    let pos = opt_pos.unwrap_or_else(|| {
-      Vec2::new(
-        rand::gen_range(ENEMY_RADIUS, screen_width() - ENEMY_RADIUS),
-        rand::gen_range(ENEMY_RADIUS, screen_height() - ENEMY_RADIUS)
-      )
-    });
-
+  pub fn new(pos: Vec2) -> Self {
     Self {
       pos,
       life: ENEMY_INITIAL_LIFE,
