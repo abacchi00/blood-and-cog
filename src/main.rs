@@ -6,14 +6,14 @@ mod direction;
 mod bullet;
 mod aim;
 mod enemy;
-mod game_world;
+mod game;
 mod game_command;
 mod config;
 mod wall;
 mod floor;
 mod arena;
 
-use crate::game_world::GameWorld;
+use crate::game::Game;
 use crate::game_command::GameCommand;
 
 #[macroquad::main("Blood & Cog")]
@@ -22,7 +22,7 @@ async fn main() {
 
   macroquad::rand::srand(miniquad::date::now() as u64);
 
-  let mut game = GameWorld::new();
+  let mut game = Game::new();
 
   loop {
     let dt = get_frame_time();

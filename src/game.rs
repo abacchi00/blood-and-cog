@@ -16,7 +16,7 @@ use crate::enemy::Enemy;
 use crate::arena::Arena;
 use crate::game_command::GameCommand;
 
-pub struct GameWorld {
+pub struct Game {
   player: Player,
   aim: Aim,
   bullets: Vec<Bullet>,
@@ -24,7 +24,7 @@ pub struct GameWorld {
   arena: Arena,
 }
 
-impl GameWorld {
+impl Game {
   pub fn new() -> Self {
     let arena = Arena::new();
     let initial_player_pos = arena.initial_player_pos;
@@ -39,12 +39,6 @@ impl GameWorld {
 
     world.spawn_initial_enemies();
     world
-  }
-
-  fn spawn_initial_enemies(&mut self) {
-    for _ in 0..4 {
-      self.enemies.push(Enemy::new(self.arena.random_available_position()));
-    }
   }
 
   pub fn handle_input(&mut self) -> GameCommand {
@@ -79,6 +73,27 @@ impl GameWorld {
     self.cleanup_and_spawn();
   }
 
+  pub fn render(&self) {
+    let camera = self.get_camera();
+    set_camera(&camera);
+
+    clear_background(BG_COLOR);
+
+    self.arena.render(); 
+    for bullet in &self.bullets { bullet.render(); }
+    for enemy in &self.enemies { enemy.render(); }
+    self.player.render();
+
+    set_default_camera();
+    self.aim.render(); 
+  }
+
+  fn spawn_initial_enemies(&mut self) {
+    for _ in 0..4 {
+      self.enemies.push(Enemy::new(self.arena.random_available_position()));
+    }
+  }
+
   fn resolve_collisions(&mut self) {
     for bullet in &mut self.bullets {
       if self.arena.is_position_blocked(bullet.pos, bullet.radius) {
@@ -102,21 +117,7 @@ impl GameWorld {
       self.enemies.push(Enemy::new(self.arena.random_available_position()));
     }
   }
-
-  pub fn render(&self) {
-    let camera = self.get_camera();
-    set_camera(&camera);
-
-    clear_background(BG_COLOR);
-
-    self.arena.render(); 
-    for bullet in &self.bullets { bullet.render(); }
-    for enemy in &self.enemies { enemy.render(); }
-    self.player.render();
-
-    set_default_camera();
-    self.aim.render(); 
-  }
+  
 
   fn get_camera(&self) -> Camera2D {
     Camera2D {
