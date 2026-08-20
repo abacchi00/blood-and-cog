@@ -28,17 +28,16 @@ pub fn check_collision(pos_a: Vec2, shape_a: CollisionShape, pos_b: Vec2, shape_
       circle_to_rect(pos_b, r, pos_a, w, h)
     }
 
-    // TODO: fix
     (CollisionShape::Rectangle { w: w1, h: h1 }, CollisionShape::Rectangle { w: w2, h: h2 }) => {
-      let a_min_x = pos_a.x - w1 / 2.0;
-      let a_max_x = pos_a.x + w1 / 2.0;
-      let a_min_y = pos_a.y - h1 / 2.0;
-      let a_max_y = pos_a.y + h1 / 2.0;
+      let a_min_x = pos_a.x;
+      let a_max_x = pos_a.x + w1;
+      let a_min_y = pos_a.y;
+      let a_max_y = pos_a.y + h1;
 
-      let b_min_x = pos_b.x - w2 / 2.0;
-      let b_max_x = pos_b.x + w2 / 2.0;
-      let b_min_y = pos_b.y - h2 / 2.0;
-      let b_max_y = pos_b.y + h2 / 2.0;
+      let b_min_x = pos_b.x;
+      let b_max_x = pos_b.x + w2;
+      let b_min_y = pos_b.y;
+      let b_max_y = pos_b.y + h2;
 
       a_min_x < b_max_x && a_max_x > b_min_x && a_min_y < b_max_y && a_max_y > b_min_y
     }
