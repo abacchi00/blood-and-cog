@@ -15,7 +15,10 @@ use crate::game_world::GameWorld;
 
 #[macroquad::main("Blood & Cog")]
 async fn main() {
+  macroquad::rand::srand(miniquad::date::now() as u64);
+
   show_mouse(false);
+
   let mut game = GameWorld::new();
 
   loop {
