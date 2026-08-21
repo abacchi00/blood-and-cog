@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use macroquad::audio::{load_sound, play_sound_once, Sound};
+use macroquad::audio::{load_sound, play_sound_once, PlaySoundParams, play_sound, Sound};
 
 use crate::traits::{
   Renderable, RenderableSlice,
@@ -24,7 +24,9 @@ pub struct Game {
   enemies: Vec<Enemy>,
   arena: Arena,
   input_dir: Vec2,
-  shot_sound: Sound,
+  gunshot_sound: Sound,
+  main_music: Sound,
+  main_music_playing: bool,
 }
 
 impl Game {
@@ -32,7 +34,8 @@ impl Game {
     let arena = Arena::new();
     let initial_player_pos = arena.initial_player_pos;
 
-    let shot_sound = load_sound("res/gun_shot.wav").await.unwrap();
+    let gunshot_sound = load_sound("res/gunshot.wav").await.unwrap();
+    let main_music = load_sound("res/main_music.wav").await.unwrap();
 
     let mut world = Self {
       player: Player::new(initial_player_pos),
@@ -41,7 +44,9 @@ impl Game {
       enemies: Vec::new(),
       arena,
       input_dir: Vec2::ZERO,
-      shot_sound,
+      gunshot_sound,
+      main_music,
+      main_music_playing: false,
     };
 
     world.spawn_initial_enemies();
@@ -70,13 +75,22 @@ impl Game {
       self.bullets.push(Bullet::new(self.player.pos, world_mouse_pos));
       self.aim.trigger_click();
 
-      play_sound_once(&self.shot_sound);
+      play_sound_once(&self.gunshot_sound);
     }
 
     GameCommand::Continue
   }
 
   pub fn update(&mut self, dt: f32) {
+    if !self.main_music_playing {
+      play_sound(
+        &self.main_music,
+        PlaySoundParams { looped: true, volume: 0.3 },
+      );
+
+      self.main_music_playing = true;
+    }
+
     let sw = screen_width();
     let sh = screen_height();
   
