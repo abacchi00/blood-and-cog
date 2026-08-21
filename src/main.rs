@@ -15,7 +15,18 @@ mod arena;
 use crate::game::Game;
 use crate::game_command::GameCommand;
 
-#[macroquad::main("Blood & Cog")]
+fn window_conf() -> Conf {
+  Conf {
+    window_title: "Blood & Cog".to_owned(),
+    window_width: 1280,
+    window_height: 720,
+    fullscreen: false,
+    window_resizable: true,
+    ..Default::default()
+  }
+}
+
+#[macroquad::main(window_conf)]
 async fn main() {
   show_mouse(false);
 
