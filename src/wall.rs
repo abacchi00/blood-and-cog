@@ -13,16 +13,11 @@ pub struct Wall {
 }
 
 impl Wall {
-  pub fn new(opt_w: Option<f32>, opt_h: Option<f32>, opt_x: Option<f32>, opt_y: Option<f32>) -> Self {
-    let width = opt_w.unwrap_or(20.0);
-    let height = opt_h.unwrap_or(20.0);
-    let x = opt_x.unwrap_or(rand::gen_range(width, screen_width() - width));
-    let y = opt_y.unwrap_or(rand::gen_range(height, screen_height() - height));
-
+  pub fn new(x: f32, y: f32) -> Self {
     Self {  
       pos: Vec2::new(x, y),
-      width,
-      height,
+      width: GRID_CELL_SIZE,
+      height: GRID_CELL_SIZE,
     }
   }
 }
