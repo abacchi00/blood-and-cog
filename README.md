@@ -6,7 +6,7 @@
 
 ## 🎮 Gameplay Demo
 
-<img width="800" height="463" alt="demo" src="https://github.com/user-attachments/assets/944f6574-3f0d-4df0-a323-d51d95e5bb70" />
+<img width="800" height="463" alt="bcg" src="https://github.com/user-attachments/assets/a5bfc9b8-3ac1-4977-8cf4-1c97de23cdc7" />
 
 ## ✨ Features (Current & Planned)
 
