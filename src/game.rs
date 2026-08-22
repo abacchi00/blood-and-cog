@@ -57,6 +57,8 @@ impl Game {
     // Handle keyboard input
     if is_key_down(KeyCode::Escape) { return GameCommand::Exit; };
 
+    if !self.player.is_alive() { return GameCommand::Continue; };
+
     let mut input_dir = Vec2::ZERO;
     if is_key_down(KeyCode::W) || is_key_down(KeyCode::Up) { input_dir.y -= 1.0; }
     if is_key_down(KeyCode::S) || is_key_down(KeyCode::Down) { input_dir.y += 1.0; }
@@ -82,6 +84,8 @@ impl Game {
   }
 
   pub fn update(&mut self, dt: f32) {
+    if !self.player.is_alive() { return };
+
     if !self.main_music_playing {
       play_sound(
         &self.main_music,
@@ -91,12 +95,14 @@ impl Game {
       self.main_music_playing = true;
     }
 
+    self.player.update(dt);
+
     let sw = screen_width();
     let sh = screen_height();
-  
+      
     let player_delta = self.player.calculate_movement_delta(self.input_dir, dt);
     Self::move_and_slide(&mut self.player.pos, player_delta, PLAYER_RADIUS, &self.arena);
-  
+
     let player_pos = self.player.pos;
     for enemy in &mut self.enemies {
       if !enemy.is_alive() { continue; }
@@ -143,6 +149,16 @@ impl Game {
           if enemy.is_alive() && check_collision(bullet.pos(), bullet.shape(), enemy.pos(), enemy.shape()) {
             enemy.take_hit();
             bullet.collided = true;
+          }
+        }
+      }
+    }
+
+    if self.player.is_alive() {
+      for enemy in &mut self.enemies {
+        if enemy.is_alive() {
+          if check_collision(self.player.pos(), self.player.shape(), enemy.pos(), enemy.shape()) {
+            self.player.take_hit();
           }
         }
       }

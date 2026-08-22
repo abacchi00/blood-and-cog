@@ -39,5 +39,4 @@ pub const PLAYER_BORDER_THICKNESS: f32 = 3.0;
 pub const PLAYER_COLOR: Color = Color::from_hex(0xff9933);
 pub const PLAYER_BORDER_COLOR: Color = BLACK;
 pub const PLAYER_BASE_SPEED: f32 = 300.0; // pixels-per-second with dt
-
-
+pub const PLAYER_BASE_LIFE: f32 = 100.0;

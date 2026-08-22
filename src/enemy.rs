@@ -23,17 +23,18 @@ impl Enemy {
     }
   }
 
-  pub fn calculate_movement_delta(&self, player_pos: Vec2, dt: f32) -> Vec2 {
-    let direction = (player_pos - self.pos).normalize_or_zero();
-    direction * ENEMY_BASE_SPEED * dt
-  }
-
   pub fn take_hit(&mut self) {
     self.life -= 20.0;
+    self.life = self.life.max(0.0);
   }
 
   pub fn is_alive(&self) -> bool {
     self.life > 0.0
+  }
+
+  pub fn calculate_movement_delta(&self, player_pos: Vec2, dt: f32) -> Vec2 {
+    let direction = (player_pos - self.pos).normalize_or_zero();
+    direction * ENEMY_BASE_SPEED * dt
   }
 }
 

@@ -1,18 +1,42 @@
 use macroquad::prelude::*;
 
 use crate::config::*;
-use crate::traits::{Renderable, Collidable, CollisionShape};
+use crate::traits::{Collidable, CollisionShape, Renderable};
 use crate::alt_shapes::BorderedCircle;
 
 pub struct Player {
   pub pos: Vec2,
+  life: f32,
+  max_life: f32,
+  take_hit_cooldown: f32, // seconds
 }
 
 impl Player {
   pub fn new(pos: Vec2) -> Self {
     Self {
       pos,
+      life: PLAYER_BASE_LIFE,
+      max_life: PLAYER_BASE_LIFE,
+      take_hit_cooldown: 0.0,
     }
+  }
+
+  pub fn update(&mut self, dt: f32) {
+    if self.take_hit_cooldown > 0.0 {
+      self.take_hit_cooldown -= dt;
+      self.take_hit_cooldown = self.take_hit_cooldown.max(0.0);
+    }
+  }
+
+  pub fn take_hit(&mut self) {
+    if self.take_hit_cooldown <= 0.0 {
+      self.life -= 20.0;
+      self.take_hit_cooldown = 1.5;
+    }
+  }
+
+  pub fn is_alive(&self) -> bool {
+    self.life > 0.0
   }
 
   pub fn calculate_movement_delta(&self, input_dir: Vec2, dt: f32) -> Vec2 {
@@ -35,7 +59,16 @@ impl Renderable for Player {
       x: self.pos.x,
       y: self.pos.y,
       radius: PLAYER_RADIUS,
-      color: PLAYER_COLOR,
+      color: {
+        if !self.is_alive() {
+          RED
+        } else if self.take_hit_cooldown > 0.0 {
+          PLAYER_COLOR.with_alpha(
+            if (self.take_hit_cooldown * 10.0).round() % 2.0 == 0.0 { 0.5 } else { 1.0 })
+        } else {
+          PLAYER_COLOR
+        }
+      },
       b_thick: PLAYER_BORDER_THICKNESS,
       b_color: PLAYER_BORDER_COLOR,
     }.draw();
