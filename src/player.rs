@@ -1,7 +1,8 @@
 use macroquad::prelude::*;
 
-use crate::traits::{Renderable, Collidable, CollisionShape};
 use crate::config::*;
+use crate::traits::{Renderable, Collidable, CollisionShape};
+use crate::alt_shapes::BorderedCircle;
 
 pub struct Player {
   pub pos: Vec2,
@@ -30,8 +31,14 @@ impl Player {
 
 impl Renderable for Player {
   fn render(&self) {
-    draw_circle(self.pos.x, self.pos.y, PLAYER_RADIUS, PLAYER_BORDER_COLOR);
-    draw_circle(self.pos.x, self.pos.y, PLAYER_RADIUS - PLAYER_BORDER_THICKNESS, PLAYER_COLOR);
+    BorderedCircle {
+      x: self.pos.x,
+      y: self.pos.y,
+      radius: PLAYER_RADIUS,
+      color: PLAYER_COLOR,
+      b_thick: PLAYER_BORDER_THICKNESS,
+      b_color: PLAYER_BORDER_COLOR,
+    }.draw();
   }
 }
 

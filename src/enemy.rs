@@ -1,11 +1,12 @@
 use macroquad::prelude::*;
 
+use crate::config::*;
 use crate::traits::{
   Renderable,
   Expirable,
   Collidable, CollisionShape,
 };
-use crate::config::*;
+use crate::alt_shapes::BorderedCircle;
 
 pub struct Enemy {
   pub pos: Vec2,
@@ -38,8 +39,15 @@ impl Enemy {
 
 impl Renderable for Enemy {
   fn render(&self) {
-    draw_circle(self.pos.x, self.pos.y, self.radius, ENEMY_BORDER_COLOR);
-    draw_circle(self.pos.x, self.pos.y, self.radius - ENEMY_BORDER_THICKNESS, ENEMY_COLOR);
+    BorderedCircle {
+      x: self.pos.x,
+      y: self.pos.y,
+      radius: self.radius,
+      color: ENEMY_COLOR,
+      b_thick: ENEMY_BORDER_THICKNESS,
+      b_color: ENEMY_BORDER_COLOR,
+    }.draw();
+
     draw_text(format!("{}", self.life), self.pos.x - self.radius, self.pos.y + self.radius * 2.0, 20.0, WHITE);
   }
 }
