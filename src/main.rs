@@ -11,6 +11,7 @@ mod config;
 mod wall;
 mod floor;
 mod arena;
+mod alt_shapes;
 
 use crate::game::Game;
 use crate::game_command::GameCommand;

@@ -59,13 +59,13 @@ impl Arena {
         let y = row_idx as f32 * GRID_CELL_SIZE;
 
         match cell_type {
-          W => walls.push(Wall::new(Some(GRID_CELL_SIZE), Some(GRID_CELL_SIZE), Some(x), Some(y))),
+          W => walls.push(Wall::new(x, y)),
           F => {
-            floors.push(Floor::new(Some(GRID_CELL_SIZE), Some(GRID_CELL_SIZE), Some(x), Some(y)));
+            floors.push(Floor::new(x, y));
             available_grid_positions.push((col_idx, row_idx));
           },
           P => {
-            floors.push(Floor::new(Some(GRID_CELL_SIZE), Some(GRID_CELL_SIZE), Some(x), Some(y)));
+            floors.push(Floor::new(x, y));
             available_grid_positions.push((col_idx, row_idx));
             initial_player_pos = Arena::grid_to_world_pos((col_idx, row_idx));
           },
