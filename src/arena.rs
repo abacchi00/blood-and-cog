@@ -123,7 +123,7 @@ impl Arena {
 
 impl Renderable for Arena {
   fn render(&self) {
-    for wall in &self.walls { wall.render(); }
     for floor in &self.floors { floor.render(); }
+    for wall in &self.walls { wall.render(); }
   }
 }

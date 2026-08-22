@@ -14,6 +14,8 @@ pub const FLOOR_DIRT_COLOR: Color = Color::from_hex(0x292f40);
 // Wall
 pub const WALL_COLOR: Color = Color::from_hex(0x3d4451);
 pub const WALL_BRICKS_COLOR: Color = Color::from_hex(0x4d5563);
+pub const WALL_SHADOW_COLOR: Color = Color::new(0.0, 0.0, 0.0, 0.4);
+pub const WALL_SHADOW_OFFSET_Y: f32 = 8.0;
 
 // Aim
 pub const AIM_COLOR: Color = WHITE;

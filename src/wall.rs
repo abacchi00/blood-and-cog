@@ -29,6 +29,15 @@ impl Renderable for Wall {
   fn render(&self) {
     let brick_w: f32 = self.width / 3.0;
     let brick_h: f32 = self.height / 6.0;
+
+    // draw wall shadow
+    draw_rectangle(
+      self.pos.x, 
+      self.pos.y + WALL_SHADOW_OFFSET_Y, 
+      GRID_CELL_SIZE, 
+      GRID_CELL_SIZE, 
+      WALL_SHADOW_COLOR
+    );
     
     draw_rectangle(self.pos.x, self.pos.y, self.width, self.height, WALL_COLOR);
 
