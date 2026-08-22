@@ -1,2 +1,1 @@
 - feat: make enemies unable to spawn in a position overlapping the player
-- feat: make the enemies move towards the player

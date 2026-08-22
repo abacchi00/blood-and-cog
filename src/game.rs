@@ -16,6 +16,7 @@ use crate::aim::Aim;
 use crate::enemy::Enemy;
 use crate::arena::Arena;
 use crate::game_command::GameCommand;
+use crate::hud::Hud;
 
 pub struct Game {
   player: Player,
@@ -131,6 +132,8 @@ impl Game {
     self.player.render();
 
     set_default_camera();
+
+    Hud::render(self.player.life);
     self.aim.render(); 
   }
 

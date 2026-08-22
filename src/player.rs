@@ -6,8 +6,8 @@ use crate::alt_shapes::BorderedCircle;
 
 pub struct Player {
   pub pos: Vec2,
-  life: f32,
-  max_life: f32,
+  pub life: f32,
+  // max_life: f32,
   take_hit_cooldown: f32, // seconds
 }
 
@@ -16,7 +16,7 @@ impl Player {
     Self {
       pos,
       life: PLAYER_BASE_LIFE,
-      max_life: PLAYER_BASE_LIFE,
+      // max_life: PLAYER_BASE_LIFE,
       take_hit_cooldown: 0.0,
     }
   }
