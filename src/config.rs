@@ -30,14 +30,18 @@ pub const BULLET_COLOR: Color = WHITE;
 pub const BULLET_BASE_SPEED: f32 = 700.0; // pixels-per-second with dt
 
 // Enemy
-pub const ENEMY_RADIUS: f32 = GRID_CELL_SIZE / 2.0;
-pub const ENEMY_BORDER_THICKNESS: f32 = 3.0;
-pub const ENEMY_COLOR: Color = Color::from_hex(0x4e9a06);
+pub const ENEMY_RADIUS: f32 = GRID_CELL_SIZE / 2.25;
+pub const ENEMY_BORDER_THICKNESS: f32 = 2.5;
 pub const ENEMY_BORDER_COLOR: Color = Color::from_hex(0x12141a);
 pub const ENEMY_INITIAL_LIFE: f32 = 100.0;
 pub const ENEMY_BASE_SPEED: f32 = 120.0;
 pub const ENEMY_COG_DROP_QUANT_MIN: usize = 1;
 pub const ENEMY_COG_DROP_QUANT_MAX: usize = 3;
+pub const ENEMY_BODY_COLOR: u32 = 0x5a524a;
+pub const ENEMY_METAL_COLOR: u32 = 0xc8c8c8;
+pub const ENEMY_CYAN_VISOR: u32 = 0x00e5ff;
+pub const ENEMY_WALK_SPEED_MULT: f32 = 12.0;
+pub const ENEMY_LEG_COUNT: usize = 3;
 
 // Player
 pub const PLAYER_RADIUS: f32 = GRID_CELL_SIZE / 2.0;

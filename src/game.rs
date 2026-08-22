@@ -118,12 +118,11 @@ impl Game {
     let player_delta = self.player.calculate_movement_delta(self.input_dir, dt);
     Self::move_and_slide(&mut self.player.pos, player_delta, PLAYER_RADIUS, &self.arena);
 
-    let player_pos = self.player.pos;
+    let player_pos = self.player.pos();
     for enemy in &mut self.enemies {
       if !enemy.is_alive() { continue; }
 
-      let enemy_delta = enemy.calculate_movement_delta(player_pos, dt);
-      
+      let enemy_delta = enemy.update_movement(player_pos, dt);
       Self::move_and_slide(&mut enemy.pos, enemy_delta, enemy.radius, &self.arena);
     }
 
