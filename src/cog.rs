@@ -20,22 +20,31 @@ impl Cog {
   pub fn mark_as_collected(&mut self) {
     self.collected = true;
   }
-}
 
-impl Renderable for Cog {
-  fn render(&self) {
+  pub fn render_scaled(&self, scale: f32) {
     // Cog shadow
-    draw_circle(self.pos.x, self.pos.y + COG_SHADOW_OFFSET, COG_RADIUS, COG_SHADOW_COLOR);
+    draw_circle(
+      self.pos.x,
+      self.pos.y + COG_SHADOW_OFFSET * scale,
+      COG_RADIUS * scale,
+      COG_SHADOW_COLOR,
+    );
 
     // Cog
     BorderedCircle {
       x: self.pos.x,
       y: self.pos.y,
-      radius: COG_RADIUS,
+      radius: COG_RADIUS * scale,
       color: COG_SHADOW_COLOR,
-      b_thick: COG_BORDER_THICKNESS,
+      b_thick: COG_BORDER_THICKNESS * scale,
       b_color: COG_COLOR,
     }.draw();
+  }
+}
+
+impl Renderable for Cog {
+  fn render(&self) {
+    self.render_scaled(1.0);
   }
 }
 

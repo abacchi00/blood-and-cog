@@ -25,6 +25,7 @@ pub struct Game {
   main_music: Sound,
   main_music_playing: bool,
   coin_sound: Sound,
+  hud: Hud,
 }
 
 impl Game {
@@ -47,6 +48,7 @@ impl Game {
       main_music,
       main_music_playing: false,
       coin_sound,
+      hud: Hud::new(),
     };
 
     world.spawn_arena_enemies();
@@ -126,7 +128,8 @@ impl Game {
 
     self.aim.update(dt, sw, sh);
     self.bullets.update_all(dt, sw, sh);
-  
+    self.hud.update(dt, sw, sh);
+
     self.resolve_collisions();
     self.cleanup_and_spawn();
   }
@@ -145,7 +148,7 @@ impl Game {
 
     set_default_camera();
 
-    Hud::render(self.player.life, self.player.cogs_count);
+    self.hud.render(self.player.life, self.player.cogs_count);
     self.aim.render(); 
   }
 
@@ -176,6 +179,7 @@ impl Game {
         if check_collision(self.player.pos(), self.player.shape(), cog.pos(), cog.shape()) {
           self.player.pick_cog();
           cog.mark_as_collected();
+          self.hud.display_cog_collected();
           play_sound_once(&self.coin_sound);
         }
       }

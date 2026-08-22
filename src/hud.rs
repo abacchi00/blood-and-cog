@@ -2,11 +2,19 @@ use macroquad::prelude::*;
 
 use crate::config::*;
 use crate::alt_shapes::BorderedRect;
+use crate::cog::Cog;
+use crate::traits::*;
 
-pub struct Hud {}
+pub struct Hud {
+  cog_scale: f32,
+}
 
 impl Hud {
-  pub fn render(player_life: f32, player_cogs: i32) {
+  pub fn new() -> Self {
+    Self { cog_scale: HUD_BASE_COG_SCALE }
+  }
+
+  pub fn render(&self, player_life: f32, player_cogs: i32) {
     let life_bar_w: f32 = screen_width() / 4.0 - HUD_MARGIN;
     let life_bar_x: f32 = HUD_MARGIN;
     let life_bar_y: f32 = HUD_MARGIN;
@@ -23,7 +31,7 @@ impl Hud {
 
     draw_text(
       format!("Cogs collected: {}", player_cogs),
-      HUD_MARGIN,
+      HUD_MARGIN + COG_RADIUS * HUD_BASE_COG_SCALE * 2.0 + HUD_MARGIN * 0.5,
       HUD_MARGIN * 2.0 + HUD_LIFE_BAR_HEIGHT + FONT_SIZE_HUD * 0.25,
       FONT_SIZE_HUD,
       MAIN_FONT_COLOR,
@@ -40,6 +48,12 @@ impl Hud {
     } else {
       Self::render_game_over_overlay();
     }
+
+    Cog::new(vec2(HUD_MARGIN + COG_RADIUS * HUD_BASE_COG_SCALE, HUD_MARGIN * 2.0 + HUD_LIFE_BAR_HEIGHT)).render_scaled(self.cog_scale);
+  }
+
+  pub fn display_cog_collected(&mut self) {
+    self.cog_scale = HUD_COLLECTED_COG_SCALE;
   }
   
   fn render_game_over_overlay() {
@@ -69,5 +83,11 @@ impl Hud {
       screen_height(), 
       Color::new(0.0, 0.0, 0.0, 0.7) 
     );
+  }
+}
+
+impl Updatable for Hud {
+  fn update(&mut self, dt: f32, _world_width: f32, _world_height: f32) {
+    self.cog_scale = self.cog_scale.lerp(HUD_BASE_COG_SCALE, dt * 10.0);
   }
 }
