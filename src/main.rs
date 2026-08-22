@@ -45,6 +45,9 @@ async fn main() {
         game.update(dt);
         game.render();
       }
+      GameCommand::Restart => {
+        game.restart();
+      }
     }
 
     next_frame().await;

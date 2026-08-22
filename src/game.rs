@@ -33,13 +33,12 @@ pub struct Game {
 impl Game {
   pub async fn new() -> Self {
     let arena = Arena::new();
-    let initial_player_pos = arena.initial_player_pos;
 
     let gunshot_sound = load_sound("res/gunshot.wav").await.unwrap();
     let main_music = load_sound("res/main_music.wav").await.unwrap();
 
     let mut world = Self {
-      player: Player::new(initial_player_pos),
+      player: Player::new(arena.initial_player_pos),
       aim: Aim::new(),
       bullets: Vec::new(),
       enemies: Vec::new(),
@@ -54,11 +53,22 @@ impl Game {
     world
   }
 
+  pub fn restart(&mut self) {
+    self.player = Player::new(self.arena.initial_player_pos);
+    self.bullets = Vec::new();
+    self.enemies = Vec::new();
+    self.input_dir = Vec2::ZERO;
+  }
+
   pub fn handle_input(&mut self) -> GameCommand {
     // Handle keyboard input
     if is_key_down(KeyCode::Escape) { return GameCommand::Exit; };
 
-    if !self.player.is_alive() { return GameCommand::Continue; };
+    if !self.player.is_alive() {
+      if is_key_down(KeyCode::Space) { return GameCommand::Restart; };
+      
+      return GameCommand::Continue;
+    };
 
     let mut input_dir = Vec2::ZERO;
     if is_key_down(KeyCode::W) || is_key_down(KeyCode::Up) { input_dir.y -= 1.0; }

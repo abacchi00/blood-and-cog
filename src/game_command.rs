@@ -2,4 +2,5 @@
 pub enum GameCommand {
   Exit,
   Continue,
+  Restart,
 }
