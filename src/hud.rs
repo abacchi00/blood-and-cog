@@ -6,7 +6,7 @@ use crate::alt_shapes::BorderedRect;
 pub struct Hud {}
 
 impl Hud {
-  pub fn render(player_life: f32) {
+  pub fn render(player_life: f32, player_cogs: i32) {
     let life_bar_margin: f32 = 24.0;
     let life_bar_w: f32 = screen_width() / 4.0 - life_bar_margin;
     let life_bar_h: f32 = 32.0;
@@ -23,6 +23,8 @@ impl Hud {
       b_thick: life_bar_bthick,
       b_color: WALL_BRICKS_COLOR,
     }.draw();
+
+    draw_text(format!("Cogs collected: {}", player_cogs), life_bar_margin, life_bar_margin * 2.0 + life_bar_h + 8.0, 32.0, WHITE);
 
     if player_life != 0.0 {
       draw_rectangle(

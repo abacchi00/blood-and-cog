@@ -1,13 +1,7 @@
 use macroquad::prelude::*;
 use macroquad::audio::{load_sound, play_sound_once, PlaySoundParams, play_sound, Sound};
 
-use crate::traits::{
-  Renderable, RenderableSlice,
-  Updatable, UpdatableSlice,
-  ExpirableVec,
-  Collidable, 
-  check_collision,
-};
+use crate::traits::*;
 use crate::config::*;
 
 use crate::player::Player;
@@ -17,17 +11,20 @@ use crate::enemy::Enemy;
 use crate::arena::Arena;
 use crate::game_command::GameCommand;
 use crate::hud::Hud;
+use crate::cog::Cog;
 
 pub struct Game {
   player: Player,
   aim: Aim,
   bullets: Vec<Bullet>,
   enemies: Vec<Enemy>,
+  cogs: Vec<Cog>,
   arena: Arena,
   input_dir: Vec2,
   gunshot_sound: Sound,
   main_music: Sound,
   main_music_playing: bool,
+  coin_sound: Sound,
 }
 
 impl Game {
@@ -36,17 +33,20 @@ impl Game {
 
     let gunshot_sound = load_sound("res/gunshot.wav").await.unwrap();
     let main_music = load_sound("res/main_music.wav").await.unwrap();
+    let coin_sound = load_sound("res/coin.wav").await.unwrap();
 
     let mut world = Self {
       player: Player::new(arena.initial_player_pos),
       aim: Aim::new(),
       bullets: Vec::new(),
       enemies: Vec::new(),
+      cogs: Vec::new(),
       arena,
       input_dir: Vec2::ZERO,
       gunshot_sound,
       main_music,
       main_music_playing: false,
+      coin_sound,
     };
 
     world.spawn_initial_enemies();
@@ -57,6 +57,7 @@ impl Game {
     self.player = Player::new(self.arena.initial_player_pos);
     self.bullets = Vec::new();
     self.enemies = Vec::new();
+    self.cogs = Vec::new();
     self.input_dir = Vec2::ZERO;
   }
 
@@ -137,13 +138,14 @@ impl Game {
     clear_background(BG_COLOR);
 
     self.arena.render(); 
+    self.cogs.render_all();
     self.bullets.render_all();
     self.enemies.render_all();
     self.player.render();
 
     set_default_camera();
 
-    Hud::render(self.player.life);
+    Hud::render(self.player.life, self.player.cogs_count);
     self.aim.render(); 
   }
 
@@ -175,12 +177,37 @@ impl Game {
           }
         }
       }
+
+      for cog in &mut self.cogs {
+        if check_collision(self.player.pos(), self.player.shape(), cog.pos(), cog.shape()) {
+          self.player.pick_cog();
+          cog.collided = true;
+          play_sound_once(&self.coin_sound);
+        }
+      }
     }
   }
 
   fn cleanup_and_spawn(&mut self) {
     self.bullets.clean_expired();
-    self.enemies.clean_expired();
+    self.cogs.clean_expired();
+
+    self.enemies.retain(|enemy| {
+      let dead = enemy.should_clean();
+    
+      if dead {
+        for _ in 0..rand::gen_range(1, 4) {
+          self.cogs.push(Cog::new(vec2(
+            rand::gen_range(enemy.pos.x - enemy.radius, enemy.pos.x + enemy.radius),
+            rand::gen_range(enemy.pos.y - enemy.radius, enemy.pos.y + enemy.radius),
+          )));
+        }
+
+        return false;
+      } else {
+        return true;
+      }
+    });
 
     while self.enemies.len() < MIN_ENEMIES_COUNT {
       self.enemies.push(Enemy::new(self.arena.random_available_position()));

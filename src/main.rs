@@ -13,6 +13,7 @@ mod floor;
 mod arena;
 mod alt_shapes;
 mod hud;
+mod cog;
 
 use crate::game::Game;
 use crate::game_command::GameCommand;

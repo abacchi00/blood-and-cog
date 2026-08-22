@@ -9,6 +9,7 @@ pub struct Player {
   pub life: f32,
   // max_life: f32,
   take_hit_cooldown: f32, // seconds
+  pub cogs_count: i32,
 }
 
 impl Player {
@@ -18,6 +19,7 @@ impl Player {
       life: PLAYER_BASE_LIFE,
       // max_life: PLAYER_BASE_LIFE,
       take_hit_cooldown: 0.0,
+      cogs_count: 0,
     }
   }
 
@@ -51,6 +53,10 @@ impl Player {
 
     vec2(dx * PLAYER_BASE_SPEED * dt, dy * PLAYER_BASE_SPEED * dt)
   }
+
+  pub fn pick_cog(&mut self) {
+    self.cogs_count += 1;
+  } 
 }
 
 impl Renderable for Player {

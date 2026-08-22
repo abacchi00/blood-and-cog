@@ -49,6 +49,7 @@ cargo run --release
 
 - **Main Music:** ["Cyberpunk Moonlight Sonata"](https://opengameart.org/content/cyberpunk-moonlight-sonata) by [Joth](https://opengameart.org/users/joth) (OpenGameArt).
 - **Gunshot Sound Effect:** ["Film Special Effects Gun Shot 3"](https://pixabay.com/sound-effects/film-special-effects-gun-shot-3-530790/) by [Eaglaxle](https://pixabay.com/users/eaglaxle-53749042) (Pixabay Content License).
+- **Coin/Cog Pickup Sound Effect:** ["Gem collect SFX"](https://opengameart.org/content/gem-collect-sfx) by [Bobjt](https://opengameart.org/users/bobjt) (OpenGameArt).
 
 ## 📄 License
 
