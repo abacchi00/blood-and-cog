@@ -7,8 +7,7 @@ use crate::alt_shapes::BorderedCircle;
 pub struct Player {
   pub pos: Vec2,
   pub life: f32,
-  // max_life: f32,
-  take_hit_cooldown: f32, // seconds
+  take_hit_cooldown: f32,
   pub cogs_count: i32,
 }
 
@@ -17,7 +16,6 @@ impl Player {
     Self {
       pos,
       life: PLAYER_BASE_LIFE,
-      // max_life: PLAYER_BASE_LIFE,
       take_hit_cooldown: 0.0,
       cogs_count: 0,
     }
@@ -57,10 +55,56 @@ impl Player {
   pub fn pick_cog(&mut self) {
     self.cogs_count += 1;
   } 
+
+  pub fn get_barrel_tip_pos(&self) -> Vec2 {
+    let screen_mouse_pos = Vec2::from(mouse_position());
+    let half_screen = vec2(screen_width() / 2.0, screen_height() / 2.0);
+    let mouse_offset = screen_mouse_pos - half_screen;
+    let aim_angle = mouse_offset.y.atan2(mouse_offset.x);
+
+    let total_length = PLAYER_BARREL_WIDTH + PLAYER_BARREL_BORDER_THICKNESS;
+    
+    vec2(
+      self.pos.x + aim_angle.cos() * total_length,
+      self.pos.y + aim_angle.sin() * total_length,
+    )
+  }
 }
 
 impl Renderable for Player {
   fn render(&self) {
+    let screen_mouse_pos = Vec2::from(mouse_position());
+    let half_screen = vec2(screen_width() / 2.0, screen_height() / 2.0);
+    
+    let mouse_offset = screen_mouse_pos - half_screen;
+    let aim_angle = mouse_offset.y.atan2(mouse_offset.x);
+
+    let base_params = DrawRectangleParams {
+      offset: vec2(0.0, 0.5),
+      rotation: aim_angle,
+      color: PLAYER_BORDER_COLOR,
+    };
+
+    draw_rectangle_ex(
+      self.pos.x - aim_angle.cos() * PLAYER_BARREL_BORDER_THICKNESS,
+      self.pos.y - aim_angle.sin() * PLAYER_BARREL_BORDER_THICKNESS,
+      PLAYER_BARREL_WIDTH + PLAYER_BARREL_BORDER_THICKNESS * 2.0,
+      PLAYER_BARREL_HEIGHT + PLAYER_BARREL_BORDER_THICKNESS * 2.0,
+      base_params,
+    );
+
+    draw_rectangle_ex(
+      self.pos.x,
+      self.pos.y,
+      PLAYER_BARREL_WIDTH,
+      PLAYER_BARREL_HEIGHT,
+      DrawRectangleParams {
+        offset: vec2(0.0, 0.5),
+        rotation: aim_angle,
+        color: COG_COLOR,
+      },
+    );
+
     BorderedCircle {
       x: self.pos.x,
       y: self.pos.y,
@@ -78,6 +122,8 @@ impl Renderable for Player {
       b_thick: PLAYER_BORDER_THICKNESS,
       b_color: PLAYER_BORDER_COLOR,
     }.draw();
+
+    draw_circle(self.pos.x, self.pos.y, 4.0, PLAYER_BORDER_COLOR);
   }
 }
 

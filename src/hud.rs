@@ -45,11 +45,13 @@ impl Hud {
         HUD_LIFE_BAR_HEIGHT - HUD_LIFE_BAR_BTHICKNESS * 2.0,
         RED,
       );
-    } else {
+    }
+    
+    Cog::new(vec2(HUD_MARGIN + COG_RADIUS * HUD_BASE_COG_SCALE, HUD_MARGIN * 2.0 + HUD_LIFE_BAR_HEIGHT)).render_scaled(self.cog_scale);
+
+    if player_life == 0.0 {
       Self::render_game_over_overlay();
     }
-
-    Cog::new(vec2(HUD_MARGIN + COG_RADIUS * HUD_BASE_COG_SCALE, HUD_MARGIN * 2.0 + HUD_LIFE_BAR_HEIGHT)).render_scaled(self.cog_scale);
   }
 
   pub fn display_cog_collected(&mut self) {

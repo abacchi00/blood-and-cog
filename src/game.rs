@@ -88,7 +88,8 @@ impl Game {
     let world_mouse_pos = self.player.pos + offset_from_center;
 
     if is_mouse_button_pressed(MouseButton::Left) {
-      self.bullets.push(Bullet::new(self.player.pos, world_mouse_pos));
+      let spawn_pos = self.player.get_barrel_tip_pos();
+      self.bullets.push(Bullet::new(spawn_pos, world_mouse_pos));
       self.aim.trigger_click();
 
       play_sound_once(&self.gunshot_sound);

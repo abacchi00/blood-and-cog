@@ -48,6 +48,11 @@ pub const PLAYER_BASE_SPEED: f32 = 300.0; // pixels-per-second with dt
 pub const PLAYER_BASE_LIFE: f32 = 100.0;
 pub const PLAYER_INVULNERABILITY_DURATION: f32 = 1.5; // seconds
 
+// Player Gun Barrel
+pub const PLAYER_BARREL_WIDTH: f32 = 20.0;
+pub const PLAYER_BARREL_HEIGHT: f32 = 6.0;
+pub const PLAYER_BARREL_BORDER_THICKNESS: f32 = 2.0;
+
 // Cogs
 pub const COG_RADIUS: f32 = 5.0;
 pub const COG_BORDER_THICKNESS: f32 = 3.0;
