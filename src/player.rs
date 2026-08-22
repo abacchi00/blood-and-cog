@@ -33,7 +33,7 @@ impl Player {
   pub fn take_hit(&mut self) {
     if self.take_hit_cooldown <= 0.0 {
       self.life -= 20.0;
-      self.take_hit_cooldown = 1.5;
+      self.take_hit_cooldown = PLAYER_INVULNERABILITY_DURATION;
     }
   }
 

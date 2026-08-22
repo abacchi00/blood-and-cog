@@ -49,7 +49,7 @@ impl Game {
       coin_sound,
     };
 
-    world.spawn_initial_enemies();
+    world.spawn_arena_enemies();
     world
   }
 
@@ -149,12 +149,6 @@ impl Game {
     self.aim.render(); 
   }
 
-  fn spawn_initial_enemies(&mut self) {
-    for _ in 0..4 {
-      self.enemies.push(Enemy::new(self.arena.random_available_position()));
-    }
-  }
-
   fn resolve_collisions(&mut self) {
     for bullet in &mut self.bullets {
       if self.arena.is_position_blocked(bullet.pos, bullet.radius) {
@@ -181,7 +175,7 @@ impl Game {
       for cog in &mut self.cogs {
         if check_collision(self.player.pos(), self.player.shape(), cog.pos(), cog.shape()) {
           self.player.pick_cog();
-          cog.collided = true;
+          cog.mark_as_collected();
           play_sound_once(&self.coin_sound);
         }
       }
@@ -196,7 +190,7 @@ impl Game {
       let dead = enemy.should_clean();
     
       if dead {
-        for _ in 0..rand::gen_range(1, 4) {
+        for _ in 0..rand::gen_range(ENEMY_COG_DROP_QUANT_MIN, ENEMY_COG_DROP_QUANT_MAX + 1) {
           self.cogs.push(Cog::new(vec2(
             rand::gen_range(enemy.pos.x - enemy.radius, enemy.pos.x + enemy.radius),
             rand::gen_range(enemy.pos.y - enemy.radius, enemy.pos.y + enemy.radius),
@@ -209,9 +203,7 @@ impl Game {
       }
     });
 
-    while self.enemies.len() < MIN_ENEMIES_COUNT {
-      self.enemies.push(Enemy::new(self.arena.random_available_position()));
-    }
+    self.spawn_arena_enemies();
   }
 
   fn get_camera(&self) -> Camera2D {
@@ -231,6 +223,12 @@ impl Game {
     let next_y = vec2(pos.x, pos.y + delta.y);
     if !arena.is_position_blocked(next_y, radius) {
       pos.y = next_y.y;
+    }
+  }
+
+  fn spawn_arena_enemies(&mut self) {
+    for _ in self.enemies.len()..ARENA_MIN_ENEMIES_COUNT {
+      self.enemies.push(Enemy::new(self.arena.random_available_position()));
     }
   }
 }
