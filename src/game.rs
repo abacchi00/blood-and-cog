@@ -122,7 +122,7 @@ impl Game {
     for enemy in &mut self.enemies {
       if !enemy.is_alive() { continue; }
 
-      let enemy_delta = enemy.update_movement(player_pos, dt);
+      let enemy_delta = enemy.update(player_pos, dt);
       Self::move_and_slide(&mut enemy.pos, enemy_delta, enemy.radius, &self.arena);
     }
 

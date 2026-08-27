@@ -42,6 +42,8 @@ pub const ENEMY_METAL_COLOR: u32 = 0xc8c8c8;
 pub const ENEMY_CYAN_VISOR: u32 = 0x00e5ff;
 pub const ENEMY_WALK_SPEED_MULT: f32 = 12.0;
 pub const ENEMY_LEG_COUNT: usize = 3;
+pub const ENEMY_INJURED_DURATION: f32 = 0.05; // seconds
+pub const ENEMY_INJURED_COLOR: Color = LIGHTGRAY;
 
 // Player
 pub const PLAYER_RADIUS: f32 = GRID_CELL_SIZE / 2.0;
