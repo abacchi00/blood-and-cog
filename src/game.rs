@@ -25,6 +25,8 @@ pub struct Game {
   main_music: Sound,
   main_music_playing: bool,
   coin_sound: Sound,
+  enemy_injured_sound: Sound,
+  enemy_dying_sound: Sound,
   hud: Hud,
 }
 
@@ -35,6 +37,8 @@ impl Game {
     let gunshot_sound = load_sound("res/gunshot.wav").await.unwrap();
     let main_music = load_sound("res/main_music.wav").await.unwrap();
     let coin_sound = load_sound("res/coin.wav").await.unwrap();
+    let enemy_injured_sound = load_sound("res/enemy_injured.wav").await.unwrap();
+    let enemy_dying_sound = load_sound("res/enemy_dying.wav").await.unwrap();
 
     let mut world = Self {
       player: Player::new(arena.initial_player_pos),
@@ -48,6 +52,8 @@ impl Game {
       main_music,
       main_music_playing: false,
       coin_sound,
+      enemy_injured_sound,
+      enemy_dying_sound,
       hud: Hud::new(),
     };
 
@@ -161,6 +167,7 @@ impl Game {
           if enemy.is_alive() && check_collision(bullet.pos(), bullet.shape(), enemy.pos(), enemy.shape()) {
             enemy.take_hit();
             bullet.collided = true;
+            play_sound(&self.enemy_injured_sound, PlaySoundParams { looped: false, volume: 0.08 });
           }
         }
       }
@@ -192,7 +199,7 @@ impl Game {
 
     self.enemies.retain(|enemy| {
       let dead = enemy.should_clean();
-    
+
       if dead {
         for _ in 0..rand::gen_range(ENEMY_COG_DROP_QUANT_MIN, ENEMY_COG_DROP_QUANT_MAX + 1) {
           self.cogs.push(Cog::new(vec2(
@@ -200,6 +207,8 @@ impl Game {
             rand::gen_range(enemy.pos.y - enemy.radius, enemy.pos.y + enemy.radius),
           )));
         }
+
+        play_sound(&self.enemy_dying_sound, PlaySoundParams { looped: false, volume: 0.7 });
 
         return false;
       } else {
