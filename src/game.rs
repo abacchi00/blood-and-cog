@@ -14,6 +14,7 @@ use crate::hud::Hud;
 use crate::cog::Cog;
 
 pub struct Game {
+  started: bool,
   player: Player,
   aim: Aim,
   bullets: Vec<Bullet>,
@@ -23,8 +24,9 @@ pub struct Game {
   input_dir: Vec2,
   gunshot_sound: Sound,
   main_music: Sound,
-  main_music_playing: bool,
   coin_sound: Sound,
+  enemy_injured_sound: Sound,
+  enemy_dying_sound: Sound,
   hud: Hud,
 }
 
@@ -35,8 +37,11 @@ impl Game {
     let gunshot_sound = load_sound("res/gunshot.wav").await.unwrap();
     let main_music = load_sound("res/main_music.wav").await.unwrap();
     let coin_sound = load_sound("res/coin.wav").await.unwrap();
+    let enemy_injured_sound = load_sound("res/enemy_injured.wav").await.unwrap();
+    let enemy_dying_sound = load_sound("res/enemy_dying.wav").await.unwrap();
 
     let mut world = Self {
+      started: false,
       player: Player::new(arena.initial_player_pos),
       aim: Aim::new(),
       bullets: Vec::new(),
@@ -46,13 +51,23 @@ impl Game {
       input_dir: Vec2::ZERO,
       gunshot_sound,
       main_music,
-      main_music_playing: false,
       coin_sound,
+      enemy_injured_sound,
+      enemy_dying_sound,
       hud: Hud::new(),
     };
 
+    play_sound(
+      &world.main_music,
+      PlaySoundParams { looped: true, volume: 0.3 },
+    );
+
     world.spawn_arena_enemies();
     world
+  }
+
+  pub fn start(&mut self) {
+    self.started = true;
   }
 
   pub fn restart(&mut self) {
@@ -67,10 +82,16 @@ impl Game {
     // Handle keyboard input
     if is_key_down(KeyCode::Escape) { return GameCommand::Exit; };
 
+    if !self.started {
+      if is_key_down(KeyCode::Space) { return GameCommand::Start; };
+
+      return GameCommand::Halt;
+    }
+
     if !self.player.is_alive() {
       if is_key_down(KeyCode::Space) { return GameCommand::Restart; };
       
-      return GameCommand::Continue;
+      return GameCommand::Halt;
     };
 
     let mut input_dir = Vec2::ZERO;
@@ -99,17 +120,6 @@ impl Game {
   }
 
   pub fn update(&mut self, dt: f32) {
-    if !self.player.is_alive() { return };
-
-    if !self.main_music_playing {
-      play_sound(
-        &self.main_music,
-        PlaySoundParams { looped: true, volume: 0.3 },
-      );
-
-      self.main_music_playing = true;
-    }
-
     self.player.update(dt);
 
     let sw = screen_width();
@@ -122,7 +132,7 @@ impl Game {
     for enemy in &mut self.enemies {
       if !enemy.is_alive() { continue; }
 
-      let enemy_delta = enemy.update_movement(player_pos, dt);
+      let enemy_delta = enemy.update(player_pos, dt);
       Self::move_and_slide(&mut enemy.pos, enemy_delta, enemy.radius, &self.arena);
     }
 
@@ -148,7 +158,7 @@ impl Game {
 
     set_default_camera();
 
-    self.hud.render(self.player.life, self.player.cogs_count);
+    self.hud.render(self.player.life, self.player.cogs_count, self.started);
     self.aim.render(); 
   }
 
@@ -161,6 +171,7 @@ impl Game {
           if enemy.is_alive() && check_collision(bullet.pos(), bullet.shape(), enemy.pos(), enemy.shape()) {
             enemy.take_hit();
             bullet.collided = true;
+            play_sound(&self.enemy_injured_sound, PlaySoundParams { looped: false, volume: 0.08 });
           }
         }
       }
@@ -192,7 +203,7 @@ impl Game {
 
     self.enemies.retain(|enemy| {
       let dead = enemy.should_clean();
-    
+
       if dead {
         for _ in 0..rand::gen_range(ENEMY_COG_DROP_QUANT_MIN, ENEMY_COG_DROP_QUANT_MAX + 1) {
           self.cogs.push(Cog::new(vec2(
@@ -200,6 +211,8 @@ impl Game {
             rand::gen_range(enemy.pos.y - enemy.radius, enemy.pos.y + enemy.radius),
           )));
         }
+
+        play_sound(&self.enemy_dying_sound, PlaySoundParams { looped: false, volume: 0.7 });
 
         return false;
       } else {

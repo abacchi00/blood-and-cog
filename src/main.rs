@@ -42,13 +42,10 @@ async fn main() {
 
     match game.handle_input() {
       GameCommand::Exit => break,
-      GameCommand::Continue => {
-        game.update(dt);
-        game.render();
-      }
-      GameCommand::Restart => {
-        game.restart();
-      }
+      GameCommand::Continue => { game.update(dt); game.render(); }
+      GameCommand::Halt => { game.render(); }
+      GameCommand::Restart => { game.restart(); }
+      GameCommand::Start => { game.start(); }
     }
 
     next_frame().await;

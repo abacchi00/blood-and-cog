@@ -10,6 +10,7 @@ pub struct Enemy {
   life: f32,
   facing_angle: f32,
   walk_anim_timer: f32,
+  injured_cooldown: f32,
 }
 
 impl Enemy {
@@ -20,10 +21,16 @@ impl Enemy {
       life: ENEMY_INITIAL_LIFE,
       facing_angle: 0.0,
       walk_anim_timer: 0.0,
+      injured_cooldown: 0.0,
     }
   }
 
-  pub fn update_movement(&mut self, player_pos: Vec2, dt: f32) -> Vec2 {
+  pub fn update(&mut self, player_pos: Vec2, dt: f32) -> Vec2 {
+    if self.injured_cooldown > 0.0 {
+      self.injured_cooldown -= dt;
+      self.injured_cooldown = self.injured_cooldown.max(0.0);
+    }
+
     let direction = player_pos - self.pos;
     if direction.length_squared() > 0.001 {
       self.facing_angle = direction.y.atan2(direction.x);
@@ -35,6 +42,10 @@ impl Enemy {
   }
 
   pub fn take_hit(&mut self) {
+    if self.injured_cooldown <= 0.0 {
+      self.injured_cooldown = ENEMY_INJURED_DURATION; // seconds
+    }
+
     self.life -= 20.0;
     self.life = self.life.max(0.0);
   }
@@ -45,6 +56,14 @@ impl Enemy {
 
   pub fn should_clean(&self) -> bool {
     !self.is_alive()
+  }
+
+  fn get_color(&self, color: Color) -> Color {
+    if self.injured_cooldown > 0.0 {
+      return ENEMY_INJURED_COLOR;
+    }
+
+    color
   }
 }
 
@@ -76,7 +95,7 @@ impl Renderable for Enemy {
     );
 
     // Procedural mechanical spider legs with triangular claws
-    let metal_color = Color::from_hex(ENEMY_METAL_COLOR);
+    let metal_color = self.get_color(Color::from_hex(ENEMY_METAL_COLOR));
 
     for i in 0..ENEMY_LEG_COUNT {
       for side in [-1.0, 1.0] {
@@ -106,8 +125,8 @@ impl Renderable for Enemy {
         draw_line(knee_x, knee_y + shadow_y, foot_x, foot_y + shadow_y, 3.0, shadow_color);
 
         // Actual leg segments
-        draw_line(hip_x, hip_y, knee_x, knee_y, 3.0, ENEMY_BORDER_COLOR);
-        draw_line(knee_x, knee_y, foot_x, foot_y, 3.0, ENEMY_BORDER_COLOR);
+        draw_line(hip_x, hip_y, knee_x, knee_y, 3.0, self.get_color(ENEMY_BORDER_COLOR));
+        draw_line(knee_x, knee_y, foot_x, foot_y, 3.0, self.get_color(ENEMY_BORDER_COLOR));
         draw_line(hip_x, hip_y, knee_x, knee_y, 1.5, metal_color);
         draw_line(knee_x, knee_y, foot_x, foot_y, 1.0, metal_color);
 
@@ -124,8 +143,8 @@ impl Renderable for Enemy {
           vec2(claw_tip_x, claw_tip_y),
           metal_color,
         );
-        draw_line(foot_x + perp_x, foot_y + perp_y, claw_tip_x, claw_tip_y, 1.0, DARKGRAY);
-        draw_line(foot_x - perp_x, foot_y - perp_y, claw_tip_x, claw_tip_y, 1.0, DARKGRAY);
+        draw_line(foot_x + perp_x, foot_y + perp_y, claw_tip_x, claw_tip_y, 1.0, self.get_color(DARKGRAY));
+        draw_line(foot_x - perp_x, foot_y - perp_y, claw_tip_x, claw_tip_y, 1.0, self.get_color(DARKGRAY));
       }
     }
 
@@ -134,9 +153,9 @@ impl Renderable for Enemy {
       x: self.pos.x,
       y: self.pos.y,
       radius,
-      color: Color::from_hex(ENEMY_BODY_COLOR),
+      color: self.get_color(Color::from_hex(ENEMY_BODY_COLOR)),
       b_thick: ENEMY_BORDER_THICKNESS,
-      b_color: ENEMY_BORDER_COLOR,
+      b_color: self.get_color(ENEMY_BORDER_COLOR),
     }.draw();
 
     // Internal industrial rivets rotating with facing angle
@@ -145,8 +164,8 @@ impl Renderable for Enemy {
       let rivet_x = self.pos.x + angle.cos() * (radius * 0.55);
       let rivet_y = self.pos.y + angle.sin() * (radius * 0.55);
 
-      draw_circle(rivet_x, rivet_y, 2.0, ENEMY_BORDER_COLOR);
-      draw_circle(rivet_x, rivet_y, 1.5, metal_color);
+      draw_circle(rivet_x, rivet_y, 2.0, self.get_color(ENEMY_BORDER_COLOR));
+      draw_circle(rivet_x, rivet_y, 1.5, self.get_color(metal_color));
     }
 
     // Tactical cyan visor pointing toward the player
@@ -162,7 +181,7 @@ impl Renderable for Enemy {
       DrawRectangleParams {
         offset: vec2(0.5, 0.5),
         rotation: self.facing_angle,
-        color: ENEMY_BORDER_COLOR,
+        color: self.get_color(ENEMY_BORDER_COLOR),
       },
     );
     draw_rectangle_ex(
@@ -173,7 +192,7 @@ impl Renderable for Enemy {
       DrawRectangleParams {
         offset: vec2(0.5, 0.5),
         rotation: self.facing_angle,
-        color: Color::from_hex(ENEMY_CYAN_VISOR),
+        color: self.get_color(Color::from_hex(ENEMY_CYAN_VISOR)),
       },
     );
   }
