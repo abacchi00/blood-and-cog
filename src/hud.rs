@@ -14,7 +14,7 @@ impl Hud {
     Self { cog_scale: HUD_BASE_COG_SCALE }
   }
 
-  pub fn render(&self, player_life: f32, player_cogs: i32) {
+  pub fn render(&self, player_life: f32, player_cogs: i32, started: bool) {
     let life_bar_w: f32 = screen_width() / 4.0 - HUD_MARGIN;
     let life_bar_x: f32 = HUD_MARGIN;
     let life_bar_y: f32 = HUD_MARGIN;
@@ -51,18 +51,27 @@ impl Hud {
 
     if player_life == 0.0 {
       Self::render_game_over_overlay();
+    } else if !started {
+      Self::render_start_screen();
     }
   }
 
   pub fn display_cog_collected(&mut self) {
     self.cog_scale = HUD_COLLECTED_COG_SCALE;
   }
+
+  fn render_start_screen() {
+    Self::render_opaque_overlay();
+    Self::render_centered_text("BLOOD & COG", FONT_SIZE_GAME_OVER, -40.0);
+    Self::render_centered_text("Press Space to start the game", FONT_SIZE_INSTRUCTIONS, 48.0);
+    Self::render_centered_text("Press Esc to exit the game", FONT_SIZE_INSTRUCTIONS, 8.0);
+  }
   
   fn render_game_over_overlay() {
     Self::render_opaque_overlay();
     Self::render_centered_text("Game Over!", FONT_SIZE_GAME_OVER, -40.0);
-    Self::render_centered_text("Press Esc to exit the game", FONT_SIZE_INSTRUCTIONS, 8.0);
     Self::render_centered_text("Press Space to restart the game", FONT_SIZE_INSTRUCTIONS, 48.0);
+    Self::render_centered_text("Press Esc to exit the game", FONT_SIZE_INSTRUCTIONS, 8.0);
   }
 
   fn render_centered_text(text: &str, font_size: f32, offset_y: f32) {
