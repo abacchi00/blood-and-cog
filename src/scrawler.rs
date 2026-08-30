@@ -2,34 +2,33 @@ use macroquad::prelude::*;
 
 use crate::alt_shapes::BorderedCircle;
 use crate::config::*;
-use crate::traits::{Collidable, CollisionShape, Expirable, Renderable};
+use crate::traits::{Collidable, CollisionShape, Renderable};
+use crate::health::Health;
+use crate::{impl_damageable_enemy};
 
 pub struct Scrawler {
   pub pos: Vec2,
   pub radius: f32,
-  life: f32,
+  pub hp: Health,
   facing_angle: f32,
   walk_anim_timer: f32,
-  injured_cooldown: f32,
 }
+
+impl_damageable_enemy!(Scrawler, SCRAWLER_INJURED_COLOR);
 
 impl Scrawler {
   pub fn new(pos: Vec2) -> Self {
     Self {
       pos,
       radius: SCRAWLER_RADIUS,
-      life: SCRAWLER_INITIAL_LIFE,
+      hp: Health::new(SCRAWLER_INITIAL_LIFE, SCRAWLER_INJURED_DURATION),
       facing_angle: 0.0,
       walk_anim_timer: 0.0,
-      injured_cooldown: 0.0,
     }
   }
 
   pub fn update(&mut self, player_pos: Vec2, dt: f32) -> Vec2 {
-    if self.injured_cooldown > 0.0 {
-      self.injured_cooldown -= dt;
-      self.injured_cooldown = self.injured_cooldown.max(0.0);
-    }
+    self.hp.update(dt);
 
     let direction = player_pos - self.pos;
     if direction.length_squared() > 0.001 {
@@ -40,27 +39,6 @@ impl Scrawler {
     let normalized_dir = direction.normalize_or_zero();
     normalized_dir * SCRAWLER_BASE_SPEED * dt
   }
-
-  pub fn take_hit(&mut self) {
-    if self.injured_cooldown <= 0.0 {
-      self.injured_cooldown = SCRAWLER_INJURED_DURATION; // seconds
-    }
-
-    self.life -= 20.0;
-    self.life = self.life.max(0.0);
-  }
-
-  pub fn is_alive(&self) -> bool {
-    self.life > 0.0
-  }
-
-  fn get_color(&self, color: Color) -> Color {
-    if self.injured_cooldown > 0.0 {
-      return SCRAWLER_INJURED_COLOR;
-    }
-
-    color
-  }
 }
 
 impl Collidable for Scrawler {
@@ -69,12 +47,6 @@ impl Collidable for Scrawler {
   }
   fn shape(&self) -> CollisionShape {
     CollisionShape::Circle { radius: self.radius }
-  }
-}
-
-impl Expirable for Scrawler {
-  fn should_clean(&self) -> bool {
-    !self.is_alive()
   }
 }
 

@@ -204,7 +204,7 @@ impl Game {
 
     set_default_camera();
 
-    self.hud.render(self.player.life, self.player.cogs_count, self.started, self.leechies_kill_count, self.scrawlers_kill_count);
+    self.hud.render(self.player.hp.current, self.player.cogs_count, self.started, self.leechies_kill_count, self.scrawlers_kill_count);
     self.aim.render(); 
   }
 

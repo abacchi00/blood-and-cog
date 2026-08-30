@@ -3,19 +3,23 @@ use macroquad::prelude::*;
 use crate::config::*;
 use crate::traits::{Collidable, CollisionShape, Renderable};
 use crate::alt_shapes::BorderedCircle;
+use crate::health::Health;
+use crate::{impl_damageable};
 
 pub struct Player {
   pub pos: Vec2,
-  pub life: f32,
-  take_hit_cooldown: f32,
   pub cogs_count: i32,
+  pub hp: Health,
+  take_hit_cooldown: f32,
 }
+
+impl_damageable!(Player);
 
 impl Player {
   pub fn new(pos: Vec2) -> Self {
     Self {
       pos,
-      life: PLAYER_BASE_LIFE,
+      hp: Health::new(PLAYER_BASE_LIFE, PLAYER_INVULNERABILITY_DURATION),
       take_hit_cooldown: 0.0,
       cogs_count: 0,
     }
@@ -26,17 +30,6 @@ impl Player {
       self.take_hit_cooldown -= dt;
       self.take_hit_cooldown = self.take_hit_cooldown.max(0.0);
     }
-  }
-
-  pub fn take_hit(&mut self) {
-    if self.take_hit_cooldown <= 0.0 {
-      self.life -= 20.0;
-      self.take_hit_cooldown = PLAYER_INVULNERABILITY_DURATION;
-    }
-  }
-
-  pub fn is_alive(&self) -> bool {
-    self.life > 0.0
   }
 
   pub fn calculate_movement_delta(&self, input_dir: Vec2, dt: f32) -> Vec2 {
@@ -110,7 +103,7 @@ impl Renderable for Player {
       y: self.pos.y,
       radius: PLAYER_RADIUS,
       color: {
-        if !self.is_alive() {
+        if !self.hp.is_alive() {
           RED
         } else if self.take_hit_cooldown > 0.0 {
           PLAYER_COLOR.with_alpha(

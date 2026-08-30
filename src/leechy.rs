@@ -1,17 +1,20 @@
 use macroquad::prelude::*;
 
 use crate::config::*;
-use crate::traits::{Collidable, CollisionShape, Expirable, Renderable};
+use crate::traits::{Collidable, CollisionShape, Renderable};
+use crate::health::Health;
+use crate::{impl_damageable_enemy};
 
 pub struct Leechy {
   pub pos: Vec2,
   pub radius: f32,
-  life: f32,
+  pub hp: Health,
   facing_angle: f32,
   pulse_timer: f32,
-  injured_cooldown: f32,
   trail_timer: f32,
 }
+
+impl_damageable_enemy!(Leechy, LEECHY_INJURED_COLOR);
 
 impl Leechy {
   pub fn new(pos: Vec2) -> Self {
@@ -21,19 +24,15 @@ impl Leechy {
     Self {
       pos,
       radius: LEECHY_RADIUS * size_multiplier,
-      life: LEECHY_INITIAL_LIFE * size_multiplier,
+      hp: Health::new(LEECHY_INITIAL_LIFE, LEECHY_INJURED_DURATION),
       facing_angle: 0.0,
       pulse_timer: 0.0,
-      injured_cooldown: 0.0,
       trail_timer: 0.0,
     }
   }
 
   pub fn update(&mut self, player_pos: Vec2, dt: f32) -> (Vec2, Option<Vec2>) {
-    if self.injured_cooldown > 0.0 {
-      self.injured_cooldown -= dt;
-      self.injured_cooldown = self.injured_cooldown.max(0.0);
-    }
+    self.hp.update(dt);
 
     let direction = player_pos - self.pos;
     let mut spawned_blood = None;
@@ -54,24 +53,6 @@ impl Leechy {
 
     (delta, spawned_blood)
   }
-
-  pub fn take_hit(&mut self) {
-    if self.injured_cooldown <= 0.0 {
-      self.injured_cooldown = LEECHY_INJURED_DURATION;
-    }
-    self.life -= 20.0;
-    self.life = self.life.max(0.0);
-  }
-
-  pub fn is_alive(&self) -> bool {
-    self.life > 0.0
-  }
-
-  fn get_color(&self, color: Color) -> Color {
-    if self.injured_cooldown > 0.0 { return LEECHY_INJURED_COLOR; }
-
-    color
-  }
 }
 
 impl Collidable for Leechy {
@@ -80,12 +61,6 @@ impl Collidable for Leechy {
   }
   fn shape(&self) -> CollisionShape {
     CollisionShape::Circle { radius: self.radius * 0.9 }
-  }
-}
-
-impl Expirable for Leechy {
-  fn should_clean(&self) -> bool {
-    !self.is_alive()
   }
 }
 
