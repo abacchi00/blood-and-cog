@@ -54,10 +54,6 @@ impl Scrawler {
     self.life > 0.0
   }
 
-  pub fn should_clean(&self) -> bool {
-    !self.is_alive()
-  }
-
   fn get_color(&self, color: Color) -> Color {
     if self.injured_cooldown > 0.0 {
       return SCRAWLER_INJURED_COLOR;
