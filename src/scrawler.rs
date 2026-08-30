@@ -4,7 +4,7 @@ use crate::alt_shapes::BorderedCircle;
 use crate::config::*;
 use crate::traits::{Collidable, CollisionShape, Expirable, Renderable};
 
-pub struct Enemy {
+pub struct Scrawler {
   pub pos: Vec2,
   pub radius: f32,
   life: f32,
@@ -13,12 +13,12 @@ pub struct Enemy {
   injured_cooldown: f32,
 }
 
-impl Enemy {
+impl Scrawler {
   pub fn new(pos: Vec2) -> Self {
     Self {
       pos,
-      radius: ENEMY_RADIUS,
-      life: ENEMY_INITIAL_LIFE,
+      radius: SCRAWLER_RADIUS,
+      life: SCRAWLER_INITIAL_LIFE,
       facing_angle: 0.0,
       walk_anim_timer: 0.0,
       injured_cooldown: 0.0,
@@ -34,16 +34,16 @@ impl Enemy {
     let direction = player_pos - self.pos;
     if direction.length_squared() > 0.001 {
       self.facing_angle = direction.y.atan2(direction.x);
-      self.walk_anim_timer += dt * ENEMY_WALK_SPEED_MULT;
+      self.walk_anim_timer += dt * SCRAWLER_WALK_SPEED_MULT;
     }
 
     let normalized_dir = direction.normalize_or_zero();
-    normalized_dir * ENEMY_BASE_SPEED * dt
+    normalized_dir * SCRAWLER_BASE_SPEED * dt
   }
 
   pub fn take_hit(&mut self) {
     if self.injured_cooldown <= 0.0 {
-      self.injured_cooldown = ENEMY_INJURED_DURATION; // seconds
+      self.injured_cooldown = SCRAWLER_INJURED_DURATION; // seconds
     }
 
     self.life -= 20.0;
@@ -60,14 +60,14 @@ impl Enemy {
 
   fn get_color(&self, color: Color) -> Color {
     if self.injured_cooldown > 0.0 {
-      return ENEMY_INJURED_COLOR;
+      return SCRAWLER_INJURED_COLOR;
     }
 
     color
   }
 }
 
-impl Collidable for Enemy {
+impl Collidable for Scrawler {
   fn pos(&self) -> Vec2 {
     self.pos
   }
@@ -76,13 +76,13 @@ impl Collidable for Enemy {
   }
 }
 
-impl Expirable for Enemy {
+impl Expirable for Scrawler {
   fn should_clean(&self) -> bool {
     !self.is_alive()
   }
 }
 
-impl Renderable for Enemy {
+impl Renderable for Scrawler {
   fn render(&self) {
     let radius = self.radius;
 
@@ -95,9 +95,9 @@ impl Renderable for Enemy {
     );
 
     // Procedural mechanical spider legs with triangular claws
-    let metal_color = self.get_color(Color::from_hex(ENEMY_METAL_COLOR));
+    let metal_color = self.get_color(SCRAWLER_METAL_COLOR);
 
-    for i in 0..ENEMY_LEG_COUNT {
+    for i in 0..SCRAWLER_LEG_COUNT {
       for side in [-1.0, 1.0] {
         let base_angle_offset = side * (0.8 + (i as f32) * 0.85);
         let leg_angle = self.facing_angle + base_angle_offset;
@@ -125,8 +125,8 @@ impl Renderable for Enemy {
         draw_line(knee_x, knee_y + shadow_y, foot_x, foot_y + shadow_y, 3.0, shadow_color);
 
         // Actual leg segments
-        draw_line(hip_x, hip_y, knee_x, knee_y, 3.0, self.get_color(ENEMY_BORDER_COLOR));
-        draw_line(knee_x, knee_y, foot_x, foot_y, 3.0, self.get_color(ENEMY_BORDER_COLOR));
+        draw_line(hip_x, hip_y, knee_x, knee_y, 3.0, self.get_color(SCRAWLER_BORDER_COLOR));
+        draw_line(knee_x, knee_y, foot_x, foot_y, 3.0, self.get_color(SCRAWLER_BORDER_COLOR));
         draw_line(hip_x, hip_y, knee_x, knee_y, 1.5, metal_color);
         draw_line(knee_x, knee_y, foot_x, foot_y, 1.0, metal_color);
 
@@ -153,9 +153,9 @@ impl Renderable for Enemy {
       x: self.pos.x,
       y: self.pos.y,
       radius,
-      color: self.get_color(Color::from_hex(ENEMY_BODY_COLOR)),
-      b_thick: ENEMY_BORDER_THICKNESS,
-      b_color: self.get_color(ENEMY_BORDER_COLOR),
+      color: self.get_color(SCRAWLER_BODY_COLOR),
+      b_thick: SCRAWLER_BORDER_THICKNESS,
+      b_color: self.get_color(SCRAWLER_BORDER_COLOR),
     }.draw();
 
     // Internal industrial rivets rotating with facing angle
@@ -164,7 +164,7 @@ impl Renderable for Enemy {
       let rivet_x = self.pos.x + angle.cos() * (radius * 0.55);
       let rivet_y = self.pos.y + angle.sin() * (radius * 0.55);
 
-      draw_circle(rivet_x, rivet_y, 2.0, self.get_color(ENEMY_BORDER_COLOR));
+      draw_circle(rivet_x, rivet_y, 2.0, self.get_color(SCRAWLER_BORDER_COLOR));
       draw_circle(rivet_x, rivet_y, 1.5, self.get_color(metal_color));
     }
 
@@ -181,7 +181,7 @@ impl Renderable for Enemy {
       DrawRectangleParams {
         offset: vec2(0.5, 0.5),
         rotation: self.facing_angle,
-        color: self.get_color(ENEMY_BORDER_COLOR),
+        color: self.get_color(SCRAWLER_BORDER_COLOR),
       },
     );
     draw_rectangle_ex(
@@ -192,7 +192,7 @@ impl Renderable for Enemy {
       DrawRectangleParams {
         offset: vec2(0.5, 0.5),
         rotation: self.facing_angle,
-        color: self.get_color(Color::from_hex(ENEMY_CYAN_VISOR)),
+        color: self.get_color(SCRAWLER_VISOR_COLOR),
       },
     );
   }

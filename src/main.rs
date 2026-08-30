@@ -4,7 +4,7 @@ mod traits;
 mod player;
 mod bullet;
 mod aim;
-mod enemy;
+mod scrawler;
 mod game;
 mod game_command;
 mod config;
@@ -14,6 +14,8 @@ mod arena;
 mod alt_shapes;
 mod hud;
 mod cog;
+mod blood_pool;
+mod leechy;
 
 use crate::game::Game;
 use crate::game_command::GameCommand;

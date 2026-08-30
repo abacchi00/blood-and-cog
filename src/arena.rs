@@ -3,7 +3,8 @@ use macroquad::prelude::*;
 use crate::wall::Wall;
 use crate::floor::Floor;
 use crate::config::*;
-use crate::traits::Renderable;
+use crate::blood_pool::BloodPool;
+use crate::traits::{Renderable, RenderableSlice};
 
 #[derive(Clone, Copy)]
 enum GridCellType {
@@ -124,11 +125,12 @@ impl Arena {
 
     false
   }
-}
 
-impl Renderable for Arena {
-  fn render(&self) {
+  pub fn render(&self, blood_pools: &Vec<BloodPool>) {
     for floor in &self.floors { floor.render(); }
+
+    blood_pools.render_all();
+
     for wall in &self.walls { wall.render(); }
   }
 }

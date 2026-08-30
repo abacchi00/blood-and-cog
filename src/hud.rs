@@ -14,7 +14,7 @@ impl Hud {
     Self { cog_scale: HUD_BASE_COG_SCALE }
   }
 
-  pub fn render(&self, player_life: f32, player_cogs: i32, started: bool) {
+  pub fn render(&self, player_life: f32, player_cogs: i32, started: bool, lkc: i32, skc: i32) {
     let life_bar_w: f32 = screen_width() / 4.0 - HUD_MARGIN;
     let life_bar_x: f32 = HUD_MARGIN;
     let life_bar_y: f32 = HUD_MARGIN;
@@ -33,6 +33,22 @@ impl Hud {
       format!("Cogs collected: {}", player_cogs),
       HUD_MARGIN + COG_RADIUS * HUD_BASE_COG_SCALE * 2.0 + HUD_MARGIN * 0.5,
       HUD_MARGIN * 2.0 + HUD_LIFE_BAR_HEIGHT + FONT_SIZE_HUD * 0.25,
+      FONT_SIZE_HUD,
+      MAIN_FONT_COLOR,
+    );
+
+    draw_text(
+      format!("Scrawlers killed: {}", skc),
+      HUD_MARGIN + COG_RADIUS * HUD_BASE_COG_SCALE * 2.0 + HUD_MARGIN * 0.5,
+      HUD_MARGIN * 2.0 + HUD_LIFE_BAR_HEIGHT + FONT_SIZE_HUD * 1.25,
+      FONT_SIZE_HUD,
+      MAIN_FONT_COLOR,
+    );
+
+    draw_text(
+      format!("Leechies killed: {}", lkc),
+      HUD_MARGIN + COG_RADIUS * HUD_BASE_COG_SCALE * 2.0 + HUD_MARGIN * 0.5,
+      HUD_MARGIN * 2.0 + HUD_LIFE_BAR_HEIGHT + FONT_SIZE_HUD * 2.25,
       FONT_SIZE_HUD,
       MAIN_FONT_COLOR,
     );
