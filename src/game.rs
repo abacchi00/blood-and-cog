@@ -37,6 +37,7 @@ pub struct Game {
   zoom_level: f32,
   leechies_kill_count: i32,
   scrawlers_kill_count: i32,
+  screen_shake: f32,
 }
 
 impl Game {
@@ -73,6 +74,7 @@ impl Game {
       zoom_level: 2.0,
       leechies_kill_count: 0,
       scrawlers_kill_count: 0,
+      screen_shake: 0.0,
     };
 
     play_sound(
@@ -134,7 +136,8 @@ impl Game {
       let spawn_pos = self.player.get_barrel_tip_pos();
       self.bullets.push(Bullet::new(spawn_pos, world_mouse_pos));
       self.aim.trigger_click();
-
+      self.player.trigger_recoil();
+      self.screen_shake = 3.0;
       play_sound_once(&self.gunshot_sound);
     }
 
@@ -149,6 +152,11 @@ impl Game {
   }
 
   pub fn update(&mut self, dt: f32) {
+    if self.screen_shake > 0.0 {
+      self.screen_shake -= dt * 60.0;
+      self.screen_shake = self.screen_shake.max(0.0);
+    }
+
     self.player.update(dt);
 
     let sw = screen_width();
@@ -317,8 +325,16 @@ impl Game {
   }
 
   fn get_camera(&self) -> Camera2D {
+    let mut camera_target = self.player.pos;
+
+    if self.screen_shake > 0.0 {
+      let offset_x = macroquad::rand::gen_range(-1.0, 1.0) * self.screen_shake;
+      let offset_y = macroquad::rand::gen_range(-1.0, 1.0) * self.screen_shake;
+      camera_target += vec2(offset_x, offset_y);
+    }
+
     Camera2D {
-      target: self.player.pos,
+      target: camera_target,
       zoom: vec2(self.zoom_level / screen_width(), self.zoom_level / screen_height()),
       ..Default::default()
     }
