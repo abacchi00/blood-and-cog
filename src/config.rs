@@ -26,7 +26,7 @@ pub const AIM_COLOR: Color = WHITE;
 
 // Bullet
 pub const BULLET_RADIUS: f32 = 4.0;
-pub const BULLET_BASE_SPEED: f32 = 700.0; // pixels-per-second with dt
+pub const BULLET_BASE_SPEED: f32 = 1000.0; // pixels-per-second with dt
 pub const BULLET_COLOR: Color = WHITE;
 
 // Scrawler
