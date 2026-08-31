@@ -27,7 +27,6 @@ pub const AIM_COLOR: Color = WHITE;
 // Bullet
 pub const BULLET_RADIUS: f32 = 4.0;
 pub const BULLET_BASE_SPEED: f32 = 1000.0; // pixels-per-second with dt
-pub const BULLET_COLOR: Color = WHITE;
 
 // Scrawler
 pub const SCRAWLER_RADIUS: f32 = GRID_CELL_SIZE / 2.25;
@@ -68,17 +67,9 @@ pub const BLOOD_POOL_COLOR: Color = Color::from_hex(0x5a0000);
 
 // Player
 pub const PLAYER_RADIUS: f32 = GRID_CELL_SIZE / 2.0;
-pub const PLAYER_BORDER_THICKNESS: f32 = 3.0;
 pub const PLAYER_BASE_SPEED: f32 = 300.0; // pixels-per-second with dt
 pub const PLAYER_BASE_LIFE: f32 = 100.0;
 pub const PLAYER_INVULNERABILITY_DURATION: f32 = 1.5; // seconds
-pub const PLAYER_COLOR: Color = Color::from_hex(0xff9933);
-pub const PLAYER_BORDER_COLOR: Color = Color::from_hex(0x12141a);
-
-// Player Gun Barrel
-pub const PLAYER_BARREL_WIDTH: f32 = 20.0;
-pub const PLAYER_BARREL_HEIGHT: f32 = 6.0;
-pub const PLAYER_BARREL_BORDER_THICKNESS: f32 = 2.0;
 
 // Cogs
 pub const COG_RADIUS: f32 = 5.0;

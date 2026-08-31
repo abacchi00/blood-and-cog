@@ -11,11 +11,12 @@
 ## ✨ Features (Current & Planned)
 
 - **Immersive Sci-Fi Atmosphere:** Retro-futuristic HUD, atmospheric synth soundtrack, and isolated ship corridors.
-- **Visceral Gore & Particle Systems:** Satisfying destruction feedback with mechanical oil and organic blood particle splatters upon impact.
+- **High-Impact Game Feel (Juice):** Dynamic weapon rec recoil, synchronized muzzle flashes, high-speed tracer bullets with motion blur, and screen shake on every shot.
+- **Visceral Gore & Particle Systems:** Satisfying destruction feedback with mechanical oil and organic blood pools left behind by entities like Leechies.
 - **Dual Resource Economy:**
   - ⚙️ **Cogs:** Scavenged from rogue machines to upgrade your weapons and tech.
   - 🩸 **Blood/Organic Matter:** Harvested from aliens to fuel your survival and healing.
-- **Diverse Weaponry:** Multiple weapon archetypes with unique firing behaviors, cooldowns, and tactical advantages.
+- **Diverse Weaponry:** Precise firearm mechanics with accurate crosshair alignment and muzzle-to-screen scaling.
 - **Procedural Ship Layouts:** Varied room configurations and corridors to explore across every run.
 - **Brutal Boss Fights:** Encounter massive rogue mainframe units and monstrosities in deep-space chambers.
 - **Ship Lore & Mysteries:** Uncover the dark history of the galactic migration through logs and hidden environmental storytelling.
@@ -35,7 +36,7 @@ To run _Blood & Cog_ locally, ensure you have Rust installed on your machine.
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/blood-and-cog.git
+git clone https://github.com/abacchi00/blood-and-cog.git
 cd blood-and-cog
 ```
 
