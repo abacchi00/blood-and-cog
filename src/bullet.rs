@@ -40,7 +40,27 @@ impl Bullet {
 
 impl Renderable for Bullet {
   fn render(&self) {
-    draw_circle(self.pos.x, self.pos.y, self.radius, BULLET_COLOR);
+    let trail_length = self.speed * 0.04; 
+    let tail = self.pos - self.dir * trail_length;
+
+    // External orange trail
+    draw_line(
+      self.pos.x, self.pos.y, 
+      tail.x, tail.y, 
+      3.0, 
+      Color::new(1.0, 0.6, 0.0, 0.6)
+    );
+
+    // Thinner white internal nucleus
+    draw_line(
+      self.pos.x, self.pos.y, 
+      tail.x, tail.y, 
+      1.5, 
+      WHITE
+    );
+    
+    // Bullet end
+    draw_circle(self.pos.x, self.pos.y, 2.0, Color::new(1.0, 1.0, 0.5, 0.8));
   }
 }
 
