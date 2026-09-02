@@ -2,8 +2,18 @@ pub trait Damageable {
   fn health_mut(&mut self) -> &mut crate::health::Health;
   fn health(&self) -> &crate::health::Health;
 
+  // Empty hooks by default. Needs overriding to use
+  fn on_injured(&self) {}
+  fn on_death(&self) {}
+
   fn take_hit(&mut self) {
     self.health_mut().take_damage(20.0);
+    
+    if self.is_alive() {
+      self.on_injured();
+    } else {
+      self.on_death();
+    }
   }
 
   fn is_alive(&self) -> bool {
@@ -17,6 +27,10 @@ macro_rules! impl_damageable_enemy {
     impl crate::traits::Damageable for $struct_name {
       fn health_mut(&mut self) -> &mut crate::health::Health { &mut self.hp }
       fn health(&self) -> &crate::health::Health { &self.hp }
+
+      fn on_injured(&self) { self.injured_sfx.play(); }
+      
+      fn on_death(&self) { self.dying_sfx.play(); }
     }
 
     impl crate::traits::Expirable for $struct_name {

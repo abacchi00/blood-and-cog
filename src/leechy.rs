@@ -3,12 +3,15 @@ use macroquad::prelude::*;
 use crate::config::*;
 use crate::traits::{Collidable, CollisionShape, Renderable};
 use crate::health::Health;
+use crate::sfx::Sfx;
 use crate::{impl_damageable_enemy};
 
 pub struct Leechy {
   pub pos: Vec2,
   pub radius: f32,
   pub hp: Health,
+  pub injured_sfx: Sfx,
+  pub dying_sfx: Sfx,
   facing_angle: f32,
   pulse_timer: f32,
   trail_timer: f32,
@@ -17,7 +20,7 @@ pub struct Leechy {
 impl_damageable_enemy!(Leechy, LEECHY_INJURED_COLOR);
 
 impl Leechy {
-  pub fn new(pos: Vec2) -> Self {
+  pub fn new(pos: Vec2, injured_sfx: Sfx, dying_sfx: Sfx) -> Self {
     let seed = (pos.x * 12.9898 + pos.y * 78.233).sin() * 43758.5453;
     let size_multiplier = 0.6 + ((seed.abs() % 0.4));
 
@@ -25,6 +28,8 @@ impl Leechy {
       pos,
       radius: LEECHY_RADIUS * size_multiplier,
       hp: Health::new(LEECHY_INITIAL_LIFE, LEECHY_INJURED_DURATION),
+      injured_sfx,
+      dying_sfx,
       facing_angle: 0.0,
       pulse_timer: 0.0,
       trail_timer: 0.0,

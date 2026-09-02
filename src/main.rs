@@ -17,6 +17,8 @@ mod cog;
 mod blood_pool;
 mod leechy;
 mod health;
+mod game_audio;
+mod sfx;
 
 use crate::game::Game;
 use crate::game_command::GameCommand;

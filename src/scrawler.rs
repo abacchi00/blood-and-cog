@@ -4,12 +4,15 @@ use crate::alt_shapes::BorderedCircle;
 use crate::config::*;
 use crate::traits::{Collidable, CollisionShape, Renderable};
 use crate::health::Health;
+use crate::sfx::Sfx;
 use crate::{impl_damageable_enemy};
 
 pub struct Scrawler {
   pub pos: Vec2,
   pub radius: f32,
   pub hp: Health,
+  pub injured_sfx: Sfx,
+  pub dying_sfx: Sfx,
   facing_angle: f32,
   walk_anim_timer: f32,
 }
@@ -17,11 +20,13 @@ pub struct Scrawler {
 impl_damageable_enemy!(Scrawler, SCRAWLER_INJURED_COLOR);
 
 impl Scrawler {
-  pub fn new(pos: Vec2) -> Self {
+  pub fn new(pos: Vec2, injured_sfx: Sfx, dying_sfx: Sfx) -> Self {
     Self {
       pos,
       radius: SCRAWLER_RADIUS,
       hp: Health::new(SCRAWLER_INITIAL_LIFE, SCRAWLER_INJURED_DURATION),
+      injured_sfx,
+      dying_sfx, 
       facing_angle: 0.0,
       walk_anim_timer: 0.0,
     }

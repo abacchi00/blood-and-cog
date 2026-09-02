@@ -1,5 +1,4 @@
 use macroquad::prelude::*;
-use macroquad::audio::{load_sound, play_sound_once, PlaySoundParams, play_sound, Sound};
 
 use crate::traits::*;
 use crate::config::*;
@@ -14,8 +13,10 @@ use crate::hud::Hud;
 use crate::cog::Cog;
 use crate::leechy::Leechy;
 use crate::blood_pool::BloodPool;
+use crate::game_audio::GameAudio;
 
 pub struct Game {
+  audio: GameAudio,
   started: bool,
   player: Player,
   aim: Aim,
@@ -26,13 +27,6 @@ pub struct Game {
   blood_pools: Vec<BloodPool>,
   arena: Arena,
   input_dir: Vec2,
-  gunshot_sound: Sound,
-  main_music: Sound,
-  coin_sound: Sound,
-  scrawler_injured_sound: Sound,
-  scrawler_dying_sound: Sound,
-  leechy_injured_sound: Sound,
-  leechy_dying_sound: Sound,
   hud: Hud,
   zoom_level: f32,
   leechies_kill_count: i32,
@@ -43,16 +37,10 @@ pub struct Game {
 impl Game {
   pub async fn new() -> Self {
     let arena = Arena::new();
-
-    let gunshot_sound = load_sound("res/gunshot.wav").await.unwrap();
-    let main_music = load_sound("res/main_music.wav").await.unwrap();
-    let coin_sound = load_sound("res/coin.wav").await.unwrap();
-    let scrawler_injured_sound = load_sound("res/scrawler_injured.wav").await.unwrap();
-    let scrawler_dying_sound = load_sound("res/scrawler_dying.wav").await.unwrap();
-    let leechy_injured_sound = load_sound("res/leechy_injured.ogg").await.unwrap();
-    let leechy_dying_sound = load_sound("res/leechy_dying.wav").await.unwrap();
+    let audio = GameAudio::load().await;
 
     let mut world = Self {
+      audio,
       started: false,
       player: Player::new(arena.initial_player_pos),
       aim: Aim::new(),
@@ -63,13 +51,6 @@ impl Game {
       cogs: Vec::new(),
       arena,
       input_dir: Vec2::ZERO,
-      gunshot_sound,
-      main_music,
-      coin_sound,
-      scrawler_injured_sound,
-      scrawler_dying_sound,
-      leechy_injured_sound,
-      leechy_dying_sound,
       hud: Hud::new(),
       zoom_level: 2.0,
       leechies_kill_count: 0,
@@ -77,11 +58,7 @@ impl Game {
       screen_shake: 0.0,
     };
 
-    play_sound(
-      &world.main_music,
-      PlaySoundParams { looped: true, volume: 0.3 },
-    );
-
+    world.audio.main_music.play();
     world.spawn_arena_enemies();
     world
   }
@@ -138,7 +115,7 @@ impl Game {
       self.aim.trigger_click();
       self.player.trigger_recoil();
       self.screen_shake = 3.0;
-      play_sound_once(&self.gunshot_sound);
+      self.audio.gunshot.play();
     }
 
     // Handle mouse wheel zoom
@@ -226,7 +203,6 @@ impl Game {
           if scrawler.is_alive() && check_collision(bullet.pos(), bullet.shape(), scrawler.pos(), scrawler.shape()) {
             scrawler.take_hit();
             bullet.collided = true;
-            play_sound(&self.scrawler_injured_sound, PlaySoundParams { looped: false, volume: 0.08 });
           }
         }
 
@@ -235,7 +211,6 @@ impl Game {
           if leechy.is_alive() && check_collision(bullet.pos(), bullet.shape(), leechy.pos(), leechy.shape()) {
             leechy.take_hit();
             bullet.collided = true;
-            play_sound(&self.leechy_injured_sound, PlaySoundParams { looped: false, volume: 0.4 });
           }
         }
       }
@@ -266,7 +241,7 @@ impl Game {
           self.player.pick_cog();
           cog.mark_as_collected();
           self.hud.display_cog_collected();
-          play_sound_once(&self.coin_sound);
+          self.audio.coin.play();
         }
       }
     }
@@ -291,8 +266,6 @@ impl Game {
           )));
         }
 
-        play_sound(&self.scrawler_dying_sound, PlaySoundParams { looped: false, volume: 0.7 });
-
         return false;
       } else {
         return true;
@@ -312,8 +285,6 @@ impl Game {
             rand::gen_range(leechy.pos.y - leechy.radius * LEECHY_BLOOD_POOL_DROP_SPREAD, leechy.pos.y + leechy.radius * LEECHY_BLOOD_POOL_DROP_SPREAD),
           )));
         }
-
-        play_sound(&self.leechy_dying_sound, PlaySoundParams { looped: false, volume: 3.0 });
 
         return false;
       } else {
@@ -354,11 +325,19 @@ impl Game {
 
   fn spawn_arena_enemies(&mut self) {
     for _ in self.scrawlers.len()..ARENA_MIN_ENEMIES_COUNT {
-      self.scrawlers.push(Scrawler::new(self.arena.random_available_position()));
+      self.scrawlers.push(Scrawler::new(
+        self.arena.random_available_position(),
+        self.audio.scrawler_injured.clone(),
+        self.audio.scrawler_dying.clone()
+      ));
     }
 
     for _ in self.leechies.len()..ARENA_MIN_ENEMIES_COUNT {
-      self.leechies.push(Leechy::new(self.arena.random_available_position()));
+      self.leechies.push(Leechy::new(
+        self.arena.random_available_position(),
+        self.audio.leechy_injured.clone(),
+        self.audio.leechy_dying.clone()
+      ));
     }
   }
 }
